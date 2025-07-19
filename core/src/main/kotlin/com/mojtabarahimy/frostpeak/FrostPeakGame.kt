@@ -72,6 +72,10 @@ class FrostPeakGame : ApplicationAdapter() {
         batch.end()
     }
 
+    override fun resize(width: Int, height: Int) {
+        viewport.update(width, height)
+    }
+
     override fun dispose() {
         batch.dispose()
         player.texture.dispose()
