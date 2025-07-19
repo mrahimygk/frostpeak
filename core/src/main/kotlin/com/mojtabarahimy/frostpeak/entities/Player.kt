@@ -62,7 +62,7 @@ class Player(val texture: Texture) {
         x += dx
         y += dy
 
-        if (isMoving) stateTime += delta else stateTime = 0f
+        stateTime += delta
     }
 
     fun draw(batch: SpriteBatch) {
