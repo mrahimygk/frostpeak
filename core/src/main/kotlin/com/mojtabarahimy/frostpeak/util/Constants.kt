@@ -6,4 +6,5 @@ object Constants {
     const val worldHeight = 480f
     const val speed = 100f
 
+    const val marginFraction: Float = 1f / 3f
 }

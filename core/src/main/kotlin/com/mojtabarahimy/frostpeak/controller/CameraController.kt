@@ -3,18 +3,18 @@ package com.mojtabarahimy.frostpeak.controller
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.mojtabarahimy.frostpeak.util.Constants
 
 class CameraController (
     private val camera: OrthographicCamera,
     private val viewport: Viewport,
-    private val marginFraction: Float = 1f / 3f,
     private val lerpSpeed: Float = 5f
 ){
     private val targetPos = Vector2(camera.position.x, camera.position.y)
 
     fun update(delta: Float, focusX: Float, focusY: Float){
-        val safeMarginX = viewport.worldWidth * marginFraction
-        val safeMarginY = viewport.worldHeight * marginFraction
+        val safeMarginX = viewport.worldWidth * Constants.marginFraction
+        val safeMarginY = viewport.worldHeight * Constants.marginFraction
 
         val camLeft = camera.position.x - viewport.worldWidth / 2f + safeMarginX
         val camRight = camera.position.x + viewport.worldWidth / 2f - safeMarginX
