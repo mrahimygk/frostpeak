@@ -1,6 +1,5 @@
 package com.mojtabarahimy.frostpeak
 
-import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -20,7 +19,6 @@ class FrostPeakGame : ApplicationAdapter() {
     lateinit var camera: OrthographicCamera
     lateinit var viewport: FitViewport
     lateinit var player: Player
-    private val targetCamPos = Vector2()
 
     lateinit var playerInputProcessor: PlayerInputProcessor
     lateinit var cameraController: CameraController
@@ -53,7 +51,7 @@ class FrostPeakGame : ApplicationAdapter() {
                 playerY = 100f
         */
         playerInputProcessor = PlayerInputProcessor { dx, dy ->
-            player.move(dx, dy)
+            player.update(dx, dy)
         }
 
         Gdx.input.inputProcessor = playerInputProcessor
