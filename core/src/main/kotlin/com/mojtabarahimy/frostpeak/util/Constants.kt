@@ -7,4 +7,7 @@ object Constants {
     const val speed = 100f
 
     const val marginFraction: Float = 1f / 3f
+
+    const val PLAYER_WIDTH = 32
+    const val PLAYER_HEIGHT = 48
 }

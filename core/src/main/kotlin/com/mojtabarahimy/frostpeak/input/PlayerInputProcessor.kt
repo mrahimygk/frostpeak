@@ -4,7 +4,7 @@ import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.InputAdapter
 
 class PlayerInputProcessor(
-    private val playerMovement: (dx: Float, dy: Float) -> Unit
+    private val playerMovement: (delta: Float, dx: Float, dy: Float) -> Unit
 ) : InputAdapter() {
 
     private var up = false
@@ -41,6 +41,6 @@ class PlayerInputProcessor(
         if (down) dy -= speed * delta
         if (left) dx -= speed * delta
         if (right) dx += speed * delta
-        playerMovement(dx, dy)
+        playerMovement(delta, dx, dy)
     }
 }

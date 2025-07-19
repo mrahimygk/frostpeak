@@ -50,8 +50,8 @@ class FrostPeakGame : ApplicationAdapter() {
                 playerX = 100f
                 playerY = 100f
         */
-        playerInputProcessor = PlayerInputProcessor { dx, dy ->
-            player.update(dx, dy)
+        playerInputProcessor = PlayerInputProcessor { delta, dx, dy ->
+            player.update(delta, dx, dy)
         }
 
         Gdx.input.inputProcessor = playerInputProcessor
