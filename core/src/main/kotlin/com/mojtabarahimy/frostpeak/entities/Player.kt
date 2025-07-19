@@ -13,33 +13,27 @@ class Player(val texture: Texture) {
     private val frameCols = 4
     private val frameRows = 4
 
-    private val frames: Array<Array<TextureRegion>> = TextureRegion.split(
+    private val frames = TextureRegion.split(
         texture,
         texture.width / frameCols,
         texture.height / frameRows
     )
 
+    private val downFrames = frames[0]
+    private val leftFrames = frames[1]
+    private val rightFrames = frames[2]
+    private val upFrames = frames[3]
+
+    private val walkDown = Animation(0.2f, *downFrames)
+    private val walkLeft = Animation(0.2f, *leftFrames)
+    private val walkRight = Animation(0.2f, *rightFrames)
+    private val walkUp = Animation(0.2f, *upFrames)
+
     private val walkAnimations = mapOf(
-        Direction.DOWN to Animation(
-            0.2f,
-            frames[0].copyOfRange(1, 4),
-            Animation.PlayMode.LOOP_PINGPONG
-        ),
-        Direction.UP to Animation(
-            0.2f,
-            frames[1].copyOfRange(1, 4),
-            Animation.PlayMode.LOOP_PINGPONG
-        ),
-        Direction.LEFT to Animation(
-            0.2f,
-            frames[2].copyOfRange(1, 4),
-            Animation.PlayMode.LOOP_PINGPONG
-        ),
-        Direction.RIGHT to Animation(
-            0.2f,
-            frames[3].copyOfRange(1, 4),
-            Animation.PlayMode.LOOP_PINGPONG
-        ),
+        Direction.DOWN to walkDown,
+        Direction.UP to walkUp,
+        Direction.LEFT to walkLeft,
+        Direction.RIGHT to walkRight
     )
 
     private val idleFrames = mapOf(
@@ -72,9 +66,9 @@ class Player(val texture: Texture) {
     }
 
     fun draw(batch: SpriteBatch) {
-        val frame = /*if (isMoving)
-            walkAnimations[currentDirection]?.getKeyFrame(stateTime)
-        else*/
+        val frame: TextureRegion? = if (isMoving)
+            walkAnimations[currentDirection]?.getKeyFrame(stateTime, true)
+        else
             idleFrames[currentDirection]
 
         frame?.let {
