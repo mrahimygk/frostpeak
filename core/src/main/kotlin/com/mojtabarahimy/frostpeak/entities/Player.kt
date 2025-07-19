@@ -57,7 +57,7 @@ class Player(val texture: Texture) {
             else if (dx < 0) Direction.LEFT
             else if (dy > 0) Direction.UP
             else if (dy < 0) Direction.DOWN
-            else Direction.DOWN
+            else currentDirection
 
         x += dx
         y += dy
