@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.maps.MapObject
+import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
@@ -75,6 +76,10 @@ class FrostPeakGame : ApplicationAdapter() {
         val x: Float = spawn.properties["x"] as Float
         val y: Float = spawn.properties["y"] as Float
         player.setPosition(x, y)
+
+        val door = objects.get("house_door") as RectangleMapObject
+        val doorRect = door.rectangle
+        //TODO: player.bounds.overlaps(doorRect) to detect interaction
     }
 
     override fun render() {
