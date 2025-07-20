@@ -10,4 +10,6 @@ object Constants {
 
     const val PLAYER_WIDTH = 32
     const val PLAYER_HEIGHT = 48
+
+    const val PLAYER_WALK_FRAME_DURATION = 0.2f
 }

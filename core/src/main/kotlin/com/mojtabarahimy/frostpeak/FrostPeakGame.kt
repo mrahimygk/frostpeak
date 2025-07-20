@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.ScreenUtils
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mojtabarahimy.frostpeak.controller.CameraController
@@ -15,13 +14,12 @@ import com.mojtabarahimy.frostpeak.util.Constants
 
 class FrostPeakGame : ApplicationAdapter() {
 
-    lateinit var batch: SpriteBatch
-    lateinit var camera: OrthographicCamera
-    lateinit var viewport: FitViewport
-    lateinit var player: Player
-
-    lateinit var playerInputProcessor: PlayerInputProcessor
-    lateinit var cameraController: CameraController
+    private lateinit var batch: SpriteBatch
+    private lateinit var camera: OrthographicCamera
+    private lateinit var viewport: FitViewport
+    private lateinit var player: Player
+    private lateinit var playerInputProcessor: PlayerInputProcessor
+    private lateinit var cameraController: CameraController
 
     override fun create() {
         batch = SpriteBatch()
@@ -36,7 +34,9 @@ class FrostPeakGame : ApplicationAdapter() {
         cameraController = CameraController(camera, viewport)
 
         val texture = Texture("player_sheet.png")
-        player = Player(texture)
+        val walkSound = Gdx.audio.newSound(Gdx.files.internal("sounds/footstep1.wav"))
+
+        player = Player(texture, walkSound)
 
         camera.position.set(
             player.x + player.texture.width / 2f,
@@ -79,5 +79,7 @@ class FrostPeakGame : ApplicationAdapter() {
     override fun dispose() {
         batch.dispose()
         player.texture.dispose()
+        player.walkSound.dispose()
+
     }
 }
