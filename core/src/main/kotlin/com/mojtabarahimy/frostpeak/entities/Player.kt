@@ -1,13 +1,21 @@
 package com.mojtabarahimy.frostpeak.entities
 
 import com.badlogic.gdx.audio.Sound
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.math.Rectangle
+import com.mojtabarahimy.frostpeak.collision.CollisionSystem
 import com.mojtabarahimy.frostpeak.util.Constants
 
-class Player(val texture: Texture, val walkSound: Sound) {
+class Player(
+    val texture: Texture,
+    val walkSound: Sound,
+    private val collisionSystem: CollisionSystem
+) {
 
     enum class Direction { DOWN, UP, LEFT, RIGHT }
 
@@ -53,6 +61,8 @@ class Player(val texture: Texture, val walkSound: Sound) {
     private var footstepTimer = 0f
     private val footstepInterval = Constants.PLAYER_WALK_FRAME_DURATION * 2f
 
+    private val collisionBounds = Rectangle()
+
     fun update(delta: Float, dx: Float, dy: Float) {
         isMoving = dx != 0f || dy != 0f
 
@@ -63,8 +73,6 @@ class Player(val texture: Texture, val walkSound: Sound) {
             else if (dy < 0) Direction.DOWN
             else currentDirection
 
-        x += dx
-        y += dy
 
         stateTime += delta
 
@@ -77,6 +85,18 @@ class Player(val texture: Texture, val walkSound: Sound) {
         } else {
             footstepTimer = footstepInterval // reset to delay next play
         }
+
+        val newX = x + dx
+        val newY = y + dy
+
+        val w = downFrames[0].regionWidth
+        val h = downFrames[0].regionHeight
+        collisionBounds.set(Rectangle(newX + w/4f, newY+h/6f, w/2f, h/6f))
+        if (!collisionSystem.checkCollision(collisionBounds)) {
+            x = newX
+            y = newY
+        }
+
     }
 
     fun draw(batch: SpriteBatch) {
@@ -88,6 +108,20 @@ class Player(val texture: Texture, val walkSound: Sound) {
         frame?.let {
             batch.draw(it, x, y)
         }
+    }
+
+    fun drawDebug(shapeRenderer: ShapeRenderer) {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line)
+        shapeRenderer.color = Color.MAGENTA
+
+        shapeRenderer.rect(
+            collisionBounds.x,
+            collisionBounds.y,
+            collisionBounds.width,
+            collisionBounds.height
+        )
+
+        shapeRenderer.end()
     }
 
     fun getCameraFocusX(): Float = x + Constants.PLAYER_WIDTH / 2f

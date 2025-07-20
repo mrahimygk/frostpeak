@@ -6,13 +6,17 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.MapObject
 import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
+import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.utils.viewport.FitViewport
+import com.mojtabarahimy.frostpeak.collision.CollisionSystem
 import com.mojtabarahimy.frostpeak.controller.CameraController
 import com.mojtabarahimy.frostpeak.entities.Player
 import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
@@ -33,6 +37,10 @@ class FrostPeakGame : ApplicationAdapter() {
     private val beforePlayerLayers = arrayOf("ground", "trees", "houseBase")
     private val afterPlayerLayers = arrayOf("abovePlayer")
 
+    private lateinit var collisionSystem: CollisionSystem
+
+    private lateinit var shapeRenderer: ShapeRenderer
+
     override fun create() {
         batch = SpriteBatch()
 
@@ -47,8 +55,11 @@ class FrostPeakGame : ApplicationAdapter() {
 
         val texture = Texture("player_sheet.png")
         val walkSound = Gdx.audio.newSound(Gdx.files.internal("sounds/footstep1.wav"))
+        map = TmxMapLoader().load("maps/main_house_outdoor.tmx")
 
-        player = Player(texture, walkSound)
+        collisionSystem = CollisionSystem(map)
+
+        player = Player(texture, walkSound, collisionSystem)
 
         camera.position.set(
             player.x + player.texture.width / 2f,
@@ -68,7 +79,6 @@ class FrostPeakGame : ApplicationAdapter() {
 
         Gdx.input.inputProcessor = playerInputProcessor
 
-        map = TmxMapLoader().load("maps/main_house_outdoor.tmx")
         mapRenderer = OrthogonalTiledMapRenderer(map, 1f)
 
         val objects = map.layers.get("objects").objects
@@ -80,6 +90,8 @@ class FrostPeakGame : ApplicationAdapter() {
         val door = objects.get("house_door") as RectangleMapObject
         val doorRect = door.rectangle
         //TODO: player.bounds.overlaps(doorRect) to detect interaction
+
+        shapeRenderer = ShapeRenderer()
     }
 
     override fun render() {
@@ -100,6 +112,10 @@ class FrostPeakGame : ApplicationAdapter() {
         batch.end()
 
         renderMapAfterPlayer()
+
+        shapeRenderer.projectionMatrix = camera.combined
+        collisionSystem.drawDebug(shapeRenderer)
+        player.drawDebug(shapeRenderer)
     }
 
     private fun renderMapBeforePlayer() {
