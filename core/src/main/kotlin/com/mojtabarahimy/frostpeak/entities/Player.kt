@@ -92,4 +92,9 @@ class Player(val texture: Texture, val walkSound: Sound) {
 
     fun getCameraFocusX(): Float = x + Constants.PLAYER_WIDTH / 2f
     fun getCameraFocusY(): Float = y + Constants.PLAYER_HEIGHT / 2f
+
+    fun setPosition(x: Float, y: Float) {
+        this.x = x
+        this.y = y
+    }
 }
