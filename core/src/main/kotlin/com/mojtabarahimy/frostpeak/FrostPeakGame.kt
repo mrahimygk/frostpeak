@@ -2,10 +2,15 @@ package com.mojtabarahimy.frostpeak
 
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.utils.ScreenUtils
+import com.badlogic.gdx.maps.MapObject
+import com.badlogic.gdx.maps.tiled.TiledMap
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer
+import com.badlogic.gdx.maps.tiled.TmxMapLoader
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mojtabarahimy.frostpeak.controller.CameraController
 import com.mojtabarahimy.frostpeak.entities.Player
@@ -20,6 +25,12 @@ class FrostPeakGame : ApplicationAdapter() {
     private lateinit var player: Player
     private lateinit var playerInputProcessor: PlayerInputProcessor
     private lateinit var cameraController: CameraController
+
+    private lateinit var map: TiledMap
+    private lateinit var mapRenderer: TiledMapRenderer
+
+    private val beforePlayerLayers = arrayOf("ground", "trees", "houseBase")
+    private val afterPlayerLayers = arrayOf("abovePlayer")
 
     override fun create() {
         batch = SpriteBatch()
@@ -55,6 +66,15 @@ class FrostPeakGame : ApplicationAdapter() {
         }
 
         Gdx.input.inputProcessor = playerInputProcessor
+
+        map = TmxMapLoader().load("maps/main_house_outdoor.tmx")
+        mapRenderer = OrthogonalTiledMapRenderer(map, 1f)
+
+        val objects = map.layers.get("objects").objects
+        val spawn: MapObject = objects.get("player_spawn")
+        val x: Float = spawn.properties["x"] as Float
+        val y: Float = spawn.properties["y"] as Float
+        player.setPosition(x, y)
     }
 
     override fun render() {
@@ -62,14 +82,29 @@ class FrostPeakGame : ApplicationAdapter() {
 
         playerInputProcessor.update(delta, Constants.speed)
 
+        Gdx.gl.glClearColor(0.5f, 0.8f, 1f, 1f)
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+
         cameraController.update(delta, player.getCameraFocusX(), player.getCameraFocusY())
 
-        ScreenUtils.clear(0.5f, 0.8f, 1f, 1f) // sky blue background
-        batch.projectionMatrix = camera.combined
+        renderMapBeforePlayer()
 
+        batch.projectionMatrix = camera.combined
         batch.begin()
         player.draw(batch)
         batch.end()
+
+        renderMapAfterPlayer()
+    }
+
+    private fun renderMapBeforePlayer() {
+        mapRenderer.setView(camera)
+        mapRenderer.render(beforePlayerLayers.toMapIndices(map))
+    }
+
+    private fun renderMapAfterPlayer() {
+        mapRenderer.setView(camera)
+        mapRenderer.render(afterPlayerLayers.toMapIndices(map))
     }
 
     override fun resize(width: Int, height: Int) {
@@ -82,4 +117,8 @@ class FrostPeakGame : ApplicationAdapter() {
         player.walkSound.dispose()
 
     }
+}
+
+private fun Array<String>.toMapIndices(map: TiledMap): IntArray {
+    return mapNotNull { name -> map.layers.getIndex(name) }.toIntArray()
 }
