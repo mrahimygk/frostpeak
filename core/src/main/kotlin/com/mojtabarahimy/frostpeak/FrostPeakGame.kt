@@ -35,7 +35,7 @@ class FrostPeakGame : ApplicationAdapter() {
 
         cameraController = CameraController(camera, viewport)
 
-        val texture = Texture("player.png") // Put this image in core/assets
+        val texture = Texture("player_sheet.png")
         player = Player(texture)
 
         camera.position.set(
