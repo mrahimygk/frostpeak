@@ -54,6 +54,10 @@ class InteractionSystem {
                     arrayOf("ground", "trees", "houseBase"),
                     arrayOf("abovePlayer"),
                 )
+
+                "mullberry_tree_main" -> {
+
+                }
             }
         }
     }
