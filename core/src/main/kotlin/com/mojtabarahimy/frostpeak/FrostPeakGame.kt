@@ -115,10 +115,13 @@ class FrostPeakGame : ApplicationAdapter() {
         batch.projectionMatrix = camera.combined
         batch.begin()
         player.draw(batch)
-        interactionSystem.handleInteractionHint(interactionBounds, interactableObject, batch, font, delta)
         batch.end()
 
         renderMapAfterPlayer()
+
+        batch.begin()
+        interactionSystem.handleInteractionHint(interactionBounds, interactableObject, batch, font, delta)
+        batch.end()
 
         shapeRenderer.projectionMatrix = camera.combined
         collisionSystem.drawDebug(shapeRenderer)
