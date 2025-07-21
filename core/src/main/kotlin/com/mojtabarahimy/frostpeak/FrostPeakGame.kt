@@ -16,6 +16,7 @@ import com.mojtabarahimy.frostpeak.entities.Player
 import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
 import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
 import com.mojtabarahimy.frostpeak.map.GameMap
+import com.mojtabarahimy.frostpeak.music.MusicManager
 import com.mojtabarahimy.frostpeak.util.Constants
 
 class FrostPeakGame : ApplicationAdapter() {
@@ -148,5 +149,6 @@ class FrostPeakGame : ApplicationAdapter() {
         player.texture.dispose()
         player.walkSound.dispose()
         gameMap.dispose()
+        MusicManager.dispose()
     }
 }

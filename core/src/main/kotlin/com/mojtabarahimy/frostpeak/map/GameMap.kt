@@ -6,6 +6,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import com.badlogic.gdx.math.Rectangle
+import com.mojtabarahimy.frostpeak.music.MusicManager
 import com.mojtabarahimy.frostpeak.util.Constants
 
 class GameMap {
@@ -25,6 +26,9 @@ class GameMap {
         renderer = OrthogonalTiledMapRenderer(map, unitScale)
         this.beforePlayerLayers = beforePlayerLayers
         this.afterPlayerLayers = afterPlayerLayers
+
+        val musicPath = map.properties["music"] as? String
+        musicPath?.let { MusicManager.playMusic(it) }
     }
 
     fun getSpawnPoint(): Rectangle {
