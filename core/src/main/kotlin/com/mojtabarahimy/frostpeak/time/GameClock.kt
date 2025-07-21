@@ -18,9 +18,9 @@ class GameClock {
 
         timeAccumulator += delta
 
-        while (timeAccumulator >= 1f) {
-            addMinutes(minutesPerSecond)
-            timeAccumulator -= 1f
+        while (timeAccumulator >= 10f) {
+            addMinutes(minutesPerSecond * 10)
+            timeAccumulator -= 10f
         }
     }
 
