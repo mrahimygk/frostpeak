@@ -17,6 +17,7 @@ import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
 import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
 import com.mojtabarahimy.frostpeak.map.GameMap
 import com.mojtabarahimy.frostpeak.music.MusicManager
+import com.mojtabarahimy.frostpeak.time.GameClock
 import com.mojtabarahimy.frostpeak.util.Constants
 
 class FrostPeakGame : ApplicationAdapter() {
@@ -31,6 +32,8 @@ class FrostPeakGame : ApplicationAdapter() {
     private val gameMap = GameMap()
     private val collisionSystem = CollisionSystem()
     private val interactionSystem = InteractionSystem()
+
+    private val clock = GameClock()
 
     private lateinit var shapeRenderer: ShapeRenderer
     private lateinit var font: BitmapFont
@@ -115,6 +118,7 @@ class FrostPeakGame : ApplicationAdapter() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         cameraController.update(delta, player.getCameraFocusX(), player.getCameraFocusY())
+        clock.update(delta)
         val interactableObject = interactionSystem.getNearbyInteraction(interactionBounds)
         gameMap.renderMapBeforePlayer(camera)
 
@@ -133,6 +137,7 @@ class FrostPeakGame : ApplicationAdapter() {
             font,
             delta
         )
+        clock.draw(batch, font)
         batch.end()
 
         shapeRenderer.projectionMatrix = camera.combined
