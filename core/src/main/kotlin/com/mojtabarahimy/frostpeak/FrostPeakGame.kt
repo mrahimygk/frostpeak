@@ -17,6 +17,7 @@ import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
 import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
 import com.mojtabarahimy.frostpeak.map.GameMap
 import com.mojtabarahimy.frostpeak.music.MusicManager
+import com.mojtabarahimy.frostpeak.render.HUDRenderer
 import com.mojtabarahimy.frostpeak.time.GameClock
 import com.mojtabarahimy.frostpeak.util.Constants
 
@@ -25,8 +26,6 @@ class FrostPeakGame : ApplicationAdapter() {
     private lateinit var batch: SpriteBatch
     private lateinit var worldCamera: OrthographicCamera
     private lateinit var worldViewport: FitViewport
-    private lateinit var uiCamera: OrthographicCamera
-    private lateinit var uiViewport: FitViewport
     private lateinit var player: Player
     private lateinit var playerInputProcessor: PlayerInputProcessor
     private lateinit var worldCameraController: WorldCameraController
@@ -34,6 +33,8 @@ class FrostPeakGame : ApplicationAdapter() {
     private val gameMap = GameMap()
     private val collisionSystem = CollisionSystem()
     private val interactionSystem = InteractionSystem()
+
+    private lateinit var hudRenderer: HUDRenderer
 
     private val clock = GameClock()
 
@@ -44,13 +45,10 @@ class FrostPeakGame : ApplicationAdapter() {
         batch = SpriteBatch()
 
         worldCamera = OrthographicCamera()
-        uiCamera = OrthographicCamera()
 
         worldViewport = FitViewport(Constants.worldWidth, Constants.worldHeight, worldCamera)
         worldViewport.apply()
-
-        uiViewport = FitViewport(Constants.worldWidth, Constants.worldHeight, uiCamera)
-        uiViewport.apply()
+        hudRenderer = HUDRenderer(clock)
 
         worldCamera.setToOrtho(false, worldViewport.worldWidth, worldViewport.worldHeight)
 
@@ -148,17 +146,12 @@ class FrostPeakGame : ApplicationAdapter() {
         shapeRenderer.projectionMatrix = worldCamera.combined
         collisionSystem.drawDebug(shapeRenderer)
         player.drawDebug(shapeRenderer)
-
-        uiCamera.update()
-        batch.projectionMatrix = uiCamera.combined
-        batch.begin()
-        clock.draw(batch, font)
-        batch.end()
+        hudRenderer.render()
     }
 
     override fun resize(width: Int, height: Int) {
         worldViewport.update(width, height)
-        uiViewport.update(width, height)
+        hudRenderer.resize(width, height)
     }
 
     override fun dispose() {
@@ -166,6 +159,7 @@ class FrostPeakGame : ApplicationAdapter() {
         player.texture.dispose()
         player.walkSound.dispose()
         gameMap.dispose()
+        hudRenderer.dispose()
         MusicManager.dispose()
     }
 }
