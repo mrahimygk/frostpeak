@@ -9,17 +9,13 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.maps.MapObject
-import com.badlogic.gdx.maps.tiled.TiledMap
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer
-import com.badlogic.gdx.maps.tiled.TmxMapLoader
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mojtabarahimy.frostpeak.collision.CollisionSystem
 import com.mojtabarahimy.frostpeak.controller.CameraController
 import com.mojtabarahimy.frostpeak.entities.Player
 import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
 import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
+import com.mojtabarahimy.frostpeak.map.GameMap
 import com.mojtabarahimy.frostpeak.util.Constants
 
 class FrostPeakGame : ApplicationAdapter() {
@@ -31,12 +27,7 @@ class FrostPeakGame : ApplicationAdapter() {
     private lateinit var playerInputProcessor: PlayerInputProcessor
     private lateinit var cameraController: CameraController
 
-    private lateinit var map: TiledMap
-    private lateinit var mapRenderer: TiledMapRenderer
-
-    private val beforePlayerLayers = arrayOf("ground", "trees", "houseBase")
-    private val afterPlayerLayers = arrayOf("abovePlayer")
-
+    private lateinit var gameMap: GameMap
     private lateinit var collisionSystem: CollisionSystem
     private lateinit var interactionSystem: InteractionSystem
 
@@ -61,9 +52,9 @@ class FrostPeakGame : ApplicationAdapter() {
         font = BitmapFont()
         font.color = Color.WHITE
 
-        map = TmxMapLoader().load("maps/main_house_outdoor.tmx")
-        collisionSystem = CollisionSystem(map)
-        interactionSystem = InteractionSystem(map)
+        gameMap = GameMap("maps/main_house_outdoor.tmx")
+        collisionSystem = CollisionSystem(gameMap.map)
+        interactionSystem = InteractionSystem(gameMap.map)
 
         player = Player(texture, walkSound, collisionSystem)
 
@@ -74,11 +65,6 @@ class FrostPeakGame : ApplicationAdapter() {
         )
         camera.update()
 
-        //Gdx.app.log("Frostpeak", "Texture loaded: ${playerTexture.width}x${playerTexture.height}")
-        /*
-                playerX = 100f
-                playerY = 100f
-        */
         playerInputProcessor = PlayerInputProcessor(
             playerMovement = { delta, dx, dy ->
                 player.update(delta, dx, dy)
@@ -88,14 +74,9 @@ class FrostPeakGame : ApplicationAdapter() {
             })
 
         Gdx.input.inputProcessor = playerInputProcessor
-
-        mapRenderer = OrthogonalTiledMapRenderer(map, 1f)
-
-        val objects = map.layers.get("objects").objects
-        val spawn: MapObject = objects.get("player_spawn")
-        val x: Float = spawn.properties["x"] as Float
-        val y: Float = spawn.properties["y"] as Float
-        player.setPosition(x, y)
+        gameMap.getSpawnPoint().run {
+            player.setPosition(x, y)
+        }
         shapeRenderer = ShapeRenderer()
     }
 
@@ -110,32 +91,28 @@ class FrostPeakGame : ApplicationAdapter() {
 
         cameraController.update(delta, player.getCameraFocusX(), player.getCameraFocusY())
         val interactableObject = interactionSystem.getNearbyInteraction(interactionBounds)
-        renderMapBeforePlayer()
+        gameMap.renderMapBeforePlayer(camera)
 
         batch.projectionMatrix = camera.combined
         batch.begin()
         player.draw(batch)
         batch.end()
 
-        renderMapAfterPlayer()
+        gameMap.renderMapAfterPlayer(camera)
 
         batch.begin()
-        interactionSystem.handleInteractionHint(interactionBounds, interactableObject, batch, font, delta)
+        interactionSystem.handleInteractionHint(
+            interactionBounds,
+            interactableObject,
+            batch,
+            font,
+            delta
+        )
         batch.end()
 
         shapeRenderer.projectionMatrix = camera.combined
         collisionSystem.drawDebug(shapeRenderer)
         player.drawDebug(shapeRenderer)
-    }
-
-    private fun renderMapBeforePlayer() {
-        mapRenderer.setView(camera)
-        mapRenderer.render(beforePlayerLayers.toMapIndices(map))
-    }
-
-    private fun renderMapAfterPlayer() {
-        mapRenderer.setView(camera)
-        mapRenderer.render(afterPlayerLayers.toMapIndices(map))
     }
 
     override fun resize(width: Int, height: Int) {
@@ -146,10 +123,6 @@ class FrostPeakGame : ApplicationAdapter() {
         batch.dispose()
         player.texture.dispose()
         player.walkSound.dispose()
-
+        gameMap.dispose()
     }
-}
-
-private fun Array<String>.toMapIndices(map: TiledMap): IntArray {
-    return mapNotNull { name -> map.layers.getIndex(name) }.toIntArray()
 }

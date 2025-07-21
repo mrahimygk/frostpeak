@@ -14,4 +14,6 @@ object Constants {
     const val PLAYER_WALK_FRAME_DURATION = 0.2f
 
     const val TILED_MAP_DEFAULT_TILE_SIZE = 4f
+
+    const val MAP_UNTI_SCALE = 1f
 }
