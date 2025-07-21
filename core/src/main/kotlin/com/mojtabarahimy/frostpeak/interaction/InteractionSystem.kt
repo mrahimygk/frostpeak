@@ -12,21 +12,28 @@ import com.badlogic.gdx.math.Rectangle
 data class InteractableObject(val name: String, val bounds: Rectangle)
 
 class InteractionSystem(map: TiledMap) {
-    private val interactables = mutableListOf<InteractableObject>()
+    private lateinit var interactables : List<InteractableObject>
     private var stateTime = 0f
 
     init {
+        initMap(map)
+    }
+
+    private fun initMap(map: TiledMap) {
         val objectLayer = map.layers.get("objects")
+        val temp = mutableListOf<InteractableObject>()
 
         for (mapObject in objectLayer.objects) {
             if (mapObject is RectangleMapObject) {
-                interactables.add(
+                temp.add(
                     InteractableObject(mapObject.name, mapObject.rectangle)
                 )
             }
 
             //TODO: add other interactables (i.e CircleMapObjects
         }
+
+        interactables = temp
     }
 
     fun handleInteraction(playerBounds: Rectangle) {
