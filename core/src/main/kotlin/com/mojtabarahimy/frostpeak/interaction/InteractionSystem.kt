@@ -14,13 +14,13 @@ class InteractionSystem(map: TiledMap) {
         val objectLayer = map.layers.get("objects")
 
         for (mapObject in objectLayer.objects) {
-            if (mapObject.name == "house_door" && mapObject is RectangleMapObject) {
+            if (mapObject is RectangleMapObject) {
                 interactables.add(
-                    InteractableObject("house_door", mapObject.rectangle)
+                    InteractableObject(mapObject.name, mapObject.rectangle)
                 )
             }
 
-            //TODO: add other interactables
+            //TODO: add other interactables (i.e CircleMapObjects
         }
     }
 
