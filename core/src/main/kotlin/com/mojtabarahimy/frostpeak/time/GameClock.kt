@@ -1,7 +1,9 @@
 package com.mojtabarahimy.frostpeak.time
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.mojtabarahimy.frostpeak.util.Constants
 
 class GameClock {
 
@@ -38,6 +40,6 @@ class GameClock {
     }
 
     fun draw(batch: SpriteBatch, font: BitmapFont) {
-        font.draw(batch, "Time: ${getTimeString()}", 20f, 20f)
+        font.draw(batch, "Time: ${getTimeString()}", Constants.worldWidth/3f, Constants.worldHeight/3f)
     }
 }

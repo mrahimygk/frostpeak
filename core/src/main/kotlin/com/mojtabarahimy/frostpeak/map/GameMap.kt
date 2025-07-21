@@ -28,7 +28,7 @@ class GameMap {
         this.afterPlayerLayers = afterPlayerLayers
 
         val musicPath = map.properties["music"] as? String
-        musicPath?.let { MusicManager.playMusic(it) }
+        //TODO: musicPath?.let { MusicManager.playMusic(it) }
     }
 
     fun getSpawnPoint(): Rectangle {

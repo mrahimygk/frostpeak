@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.mojtabarahimy.frostpeak.util.Constants
 
-class CameraController (
+class WorldCameraController (
     private val camera: OrthographicCamera,
     private val viewport: Viewport,
     private val lerpSpeed: Float = 5f

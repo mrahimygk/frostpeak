@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mojtabarahimy.frostpeak.collision.CollisionSystem
-import com.mojtabarahimy.frostpeak.controller.CameraController
+import com.mojtabarahimy.frostpeak.controller.WorldCameraController
 import com.mojtabarahimy.frostpeak.entities.Player
 import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
 import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
@@ -25,9 +25,11 @@ class FrostPeakGame : ApplicationAdapter() {
     private lateinit var batch: SpriteBatch
     private lateinit var worldCamera: OrthographicCamera
     private lateinit var worldViewport: FitViewport
+    private lateinit var uiCamera: OrthographicCamera
+    private lateinit var uiViewport: FitViewport
     private lateinit var player: Player
     private lateinit var playerInputProcessor: PlayerInputProcessor
-    private lateinit var cameraController: CameraController
+    private lateinit var worldCameraController: WorldCameraController
 
     private val gameMap = GameMap()
     private val collisionSystem = CollisionSystem()
@@ -42,13 +44,17 @@ class FrostPeakGame : ApplicationAdapter() {
         batch = SpriteBatch()
 
         worldCamera = OrthographicCamera()
+        uiCamera = OrthographicCamera()
 
         worldViewport = FitViewport(Constants.worldWidth, Constants.worldHeight, worldCamera)
-
         worldViewport.apply()
+
+        uiViewport = FitViewport(Constants.worldWidth, Constants.worldHeight, uiCamera)
+        uiViewport.apply()
+
         worldCamera.setToOrtho(false, worldViewport.worldWidth, worldViewport.worldHeight)
 
-        cameraController = CameraController(worldCamera, worldViewport)
+        worldCameraController = WorldCameraController(worldCamera, worldViewport)
 
         val texture = Texture("player_sheet.png")
         val walkSound = Gdx.audio.newSound(Gdx.files.internal("sounds/footstep1.wav"))
@@ -117,7 +123,7 @@ class FrostPeakGame : ApplicationAdapter() {
         Gdx.gl.glClearColor(0.5f, 0.8f, 1f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-        cameraController.update(delta, player.getCameraFocusX(), player.getCameraFocusY())
+        worldCameraController.update(delta, player.getCameraFocusX(), player.getCameraFocusY())
         clock.update(delta)
         val interactableObject = interactionSystem.getNearbyInteraction(interactionBounds)
         gameMap.renderMapBeforePlayer(worldCamera)
@@ -137,16 +143,22 @@ class FrostPeakGame : ApplicationAdapter() {
             font,
             delta
         )
-        clock.draw(batch, font)
         batch.end()
 
         shapeRenderer.projectionMatrix = worldCamera.combined
         collisionSystem.drawDebug(shapeRenderer)
         player.drawDebug(shapeRenderer)
+
+        uiCamera.update()
+        batch.projectionMatrix = uiCamera.combined
+        batch.begin()
+        clock.draw(batch, font)
+        batch.end()
     }
 
     override fun resize(width: Int, height: Int) {
         worldViewport.update(width, height)
+        uiViewport.update(width, height)
     }
 
     override fun dispose() {
