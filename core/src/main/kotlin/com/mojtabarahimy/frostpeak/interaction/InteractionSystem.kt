@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Rectangle
 data class InteractableObject(val name: String, val bounds: Rectangle)
 
 class InteractionSystem {
-    private lateinit var interactables : List<InteractableObject>
+    private lateinit var interactables: List<InteractableObject>
     private var stateTime = 0f
 
     fun initMap(map: TiledMap) {
@@ -32,9 +32,12 @@ class InteractionSystem {
         interactables = temp
     }
 
-    fun handleInteraction(playerBounds: Rectangle) {
+    fun handleInteraction(playerBounds: Rectangle, onInteract: () -> Unit) {
         getNearbyInteraction(playerBounds)?.let {
             Gdx.app.log("Frostpeak", "interactionSystem: getNearbyInteraction:${it.name}")
+            when (it.name) {
+                "house_door" -> onInteract()
+            }
         }
     }
 
@@ -56,7 +59,7 @@ class InteractionSystem {
             val baseY = 50f
             val floatOffset = (sin(stateTime * 2f) * 5f)
 
-            font.draw(batch, layout, playerBounds.x + offsetX, playerBounds.y + baseY+ floatOffset)
+            font.draw(batch, layout, playerBounds.x + offsetX, playerBounds.y + baseY + floatOffset)
         }
     }
 }

@@ -57,8 +57,7 @@ class FrostPeakGame : ApplicationAdapter() {
             beforePlayerLayers = arrayOf("ground", "trees", "houseBase"),
             afterPlayerLayers = arrayOf("abovePlayer"),
         )
-        collisionSystem.initMap(gameMap.map)
-        interactionSystem.initMap(gameMap.map)
+        initSystems()
 
         player = Player(texture, walkSound, collisionSystem)
 
@@ -74,12 +73,25 @@ class FrostPeakGame : ApplicationAdapter() {
                 player.update(delta, dx, dy)
             },
             onInteract = {
-                interactionSystem.handleInteraction(player.getInteractionBounds())
+                interactionSystem.handleInteraction(player.getInteractionBounds()) {
+                    gameMap.loadNewMap(
+                        "maps/main_house_indoor.tmx",
+                        beforePlayerLayers = arrayOf("ground"),
+                        afterPlayerLayers = arrayOf("abovePlayer"),
+                    )
+                    initSystems()
+                    spawnPlayer()
+                }
             })
 
         Gdx.input.inputProcessor = playerInputProcessor
         spawnPlayer()
         shapeRenderer = ShapeRenderer()
+    }
+
+    private fun initSystems() {
+        collisionSystem.initMap(gameMap.map)
+        interactionSystem.initMap(gameMap.map)
     }
 
     private fun spawnPlayer() {

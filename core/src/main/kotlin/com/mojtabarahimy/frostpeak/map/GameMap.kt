@@ -52,6 +52,22 @@ class GameMap {
         map.dispose()
         renderer.dispose()
     }
+
+    fun loadNewMap(
+        mapFilePath: String,
+        beforePlayerLayers: Array<String>,
+        afterPlayerLayers: Array<String>,
+        unitScale: Float = Constants.MAP_UNTI_SCALE
+    ) {
+        dispose()
+        initMap(
+            mapFilePath,
+            beforePlayerLayers,
+            afterPlayerLayers,
+            unitScale,
+        )
+
+    }
 }
 
 private fun Array<String>.toMapIndices(map: TiledMap): IntArray {
