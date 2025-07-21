@@ -28,8 +28,8 @@ class FrostPeakGame : ApplicationAdapter() {
     private lateinit var cameraController: CameraController
 
     private lateinit var gameMap: GameMap
-    private lateinit var collisionSystem: CollisionSystem
-    private lateinit var interactionSystem: InteractionSystem
+    private val collisionSystem = CollisionSystem()
+    private val interactionSystem = InteractionSystem()
 
     private lateinit var shapeRenderer: ShapeRenderer
     private lateinit var font: BitmapFont
@@ -57,8 +57,8 @@ class FrostPeakGame : ApplicationAdapter() {
             beforePlayerLayers = arrayOf("ground", "trees", "houseBase"),
             afterPlayerLayers = arrayOf("abovePlayer"),
         )
-        collisionSystem = CollisionSystem(gameMap.map)
-        interactionSystem = InteractionSystem(gameMap.map)
+        collisionSystem.initMap(gameMap.map)
+        interactionSystem.initMap(gameMap.map)
 
         player = Player(texture, walkSound, collisionSystem)
 

@@ -10,15 +10,11 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.math.Rectangle
 import com.mojtabarahimy.frostpeak.util.Constants
 
-class CollisionSystem(map: TiledMap) {
+class CollisionSystem {
 
     private lateinit var colliders: List<Rectangle>
 
-    init {
-        initMap(map)
-    }
-
-    private fun initMap(map: TiledMap) {
+    fun initMap(map: TiledMap) {
         val temp = mutableListOf<Rectangle>()
 
         // Try to find any TiledMapTileLayer to grab tile size
