@@ -78,9 +78,7 @@ class FrostPeakGame : ApplicationAdapter() {
                 player.update(delta, dx, dy)
             },
             onInteract = {
-                val d = interactionSystem.getNearbyInteraction(player.getInteractionBounds())
-                Gdx.app.log("Frostpeak", "interactionSystem: getNearbyInteraction:${d?.name}")
-
+                interactionSystem.handleInteraction(player.getInteractionBounds())
             })
 
         Gdx.input.inputProcessor = playerInputProcessor
