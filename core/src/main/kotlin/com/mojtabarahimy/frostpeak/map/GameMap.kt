@@ -10,23 +10,23 @@ import com.mojtabarahimy.frostpeak.util.Constants
 
 class GameMap(
     mapFilePath: String,
+    private val beforePlayerLayers : Array<String>,
+    private val afterPlayerLayers: Array<String>,
     unitScale: Float = Constants.MAP_UNTI_SCALE
 ) {
 
     val map: TiledMap = TmxMapLoader().load(mapFilePath)
     private val renderer = OrthogonalTiledMapRenderer(map, unitScale)
 
-    private val beforePlayerLayers = arrayOf("ground", "trees", "houseBase")
-    private val afterPlayerLayers = arrayOf("abovePlayer")
 
-    fun getSpawnPoint() : Rectangle {
+    fun getSpawnPoint(): Rectangle {
 
         val objects = map.layers.get("objects").objects
         val spawn: MapObject = objects.get("player_spawn")
         val x: Float = spawn.properties["x"] as Float
         val y: Float = spawn.properties["y"] as Float
 
-        return Rectangle(x,y, 1f,1f)
+        return Rectangle(x, y, 1f, 1f)
     }
 
 

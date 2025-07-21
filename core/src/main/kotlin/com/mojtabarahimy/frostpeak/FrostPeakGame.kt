@@ -52,7 +52,11 @@ class FrostPeakGame : ApplicationAdapter() {
         font = BitmapFont()
         font.color = Color.WHITE
 
-        gameMap = GameMap("maps/main_house_outdoor.tmx")
+        gameMap = GameMap(
+            "maps/main_house_outdoor.tmx",
+            beforePlayerLayers = arrayOf("ground", "trees", "houseBase"),
+            afterPlayerLayers = arrayOf("abovePlayer"),
+        )
         collisionSystem = CollisionSystem(gameMap.map)
         interactionSystem = InteractionSystem(gameMap.map)
 
