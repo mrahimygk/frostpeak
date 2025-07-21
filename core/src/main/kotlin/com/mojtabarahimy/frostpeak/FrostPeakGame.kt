@@ -27,7 +27,7 @@ class FrostPeakGame : ApplicationAdapter() {
     private lateinit var playerInputProcessor: PlayerInputProcessor
     private lateinit var cameraController: CameraController
 
-    private lateinit var gameMap: GameMap
+    private val gameMap = GameMap()
     private val collisionSystem = CollisionSystem()
     private val interactionSystem = InteractionSystem()
 
@@ -52,7 +52,7 @@ class FrostPeakGame : ApplicationAdapter() {
         font = BitmapFont()
         font.color = Color.WHITE
 
-        gameMap = GameMap(
+        gameMap.initMap(
             "maps/main_house_outdoor.tmx",
             beforePlayerLayers = arrayOf("ground", "trees", "houseBase"),
             afterPlayerLayers = arrayOf("abovePlayer"),

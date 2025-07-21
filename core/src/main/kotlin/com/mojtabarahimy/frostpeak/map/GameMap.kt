@@ -8,16 +8,24 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import com.badlogic.gdx.math.Rectangle
 import com.mojtabarahimy.frostpeak.util.Constants
 
-class GameMap(
-    mapFilePath: String,
-    private val beforePlayerLayers : Array<String>,
-    private val afterPlayerLayers: Array<String>,
-    unitScale: Float = Constants.MAP_UNTI_SCALE
-) {
+class GameMap {
 
-    val map: TiledMap = TmxMapLoader().load(mapFilePath)
-    private val renderer = OrthogonalTiledMapRenderer(map, unitScale)
+    lateinit var map: TiledMap
+    private lateinit var renderer: OrthogonalTiledMapRenderer
+    private lateinit var beforePlayerLayers: Array<String>
+    private lateinit var afterPlayerLayers: Array<String>
 
+    fun initMap(
+        mapFilePath: String,
+        beforePlayerLayers: Array<String>,
+        afterPlayerLayers: Array<String>,
+        unitScale: Float = Constants.MAP_UNTI_SCALE
+    ) {
+        map = TmxMapLoader().load(mapFilePath)
+        renderer = OrthogonalTiledMapRenderer(map, unitScale)
+        this.beforePlayerLayers = beforePlayerLayers
+        this.afterPlayerLayers = afterPlayerLayers
+    }
 
     fun getSpawnPoint(): Rectangle {
 
