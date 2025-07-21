@@ -23,8 +23,8 @@ import com.mojtabarahimy.frostpeak.util.Constants
 class FrostPeakGame : ApplicationAdapter() {
 
     private lateinit var batch: SpriteBatch
-    private lateinit var camera: OrthographicCamera
-    private lateinit var viewport: FitViewport
+    private lateinit var worldCamera: OrthographicCamera
+    private lateinit var worldViewport: FitViewport
     private lateinit var player: Player
     private lateinit var playerInputProcessor: PlayerInputProcessor
     private lateinit var cameraController: CameraController
@@ -41,14 +41,14 @@ class FrostPeakGame : ApplicationAdapter() {
     override fun create() {
         batch = SpriteBatch()
 
-        camera = OrthographicCamera()
+        worldCamera = OrthographicCamera()
 
-        viewport = FitViewport(Constants.worldWidth, Constants.worldHeight, camera)
+        worldViewport = FitViewport(Constants.worldWidth, Constants.worldHeight, worldCamera)
 
-        viewport.apply()
-        camera.setToOrtho(false, viewport.worldWidth, viewport.worldHeight)
+        worldViewport.apply()
+        worldCamera.setToOrtho(false, worldViewport.worldWidth, worldViewport.worldHeight)
 
-        cameraController = CameraController(camera, viewport)
+        cameraController = CameraController(worldCamera, worldViewport)
 
         val texture = Texture("player_sheet.png")
         val walkSound = Gdx.audio.newSound(Gdx.files.internal("sounds/footstep1.wav"))
@@ -65,12 +65,12 @@ class FrostPeakGame : ApplicationAdapter() {
 
         player = Player(texture, walkSound, collisionSystem)
 
-        camera.position.set(
+        worldCamera.position.set(
             player.x + player.texture.width / 2f,
             player.y + player.texture.height / 2f,
             0f
         )
-        camera.update()
+        worldCamera.update()
 
         playerInputProcessor = PlayerInputProcessor(
             playerMovement = { delta, dx, dy ->
@@ -120,14 +120,14 @@ class FrostPeakGame : ApplicationAdapter() {
         cameraController.update(delta, player.getCameraFocusX(), player.getCameraFocusY())
         clock.update(delta)
         val interactableObject = interactionSystem.getNearbyInteraction(interactionBounds)
-        gameMap.renderMapBeforePlayer(camera)
+        gameMap.renderMapBeforePlayer(worldCamera)
 
-        batch.projectionMatrix = camera.combined
+        batch.projectionMatrix = worldCamera.combined
         batch.begin()
         player.draw(batch)
         batch.end()
 
-        gameMap.renderMapAfterPlayer(camera)
+        gameMap.renderMapAfterPlayer(worldCamera)
 
         batch.begin()
         interactionSystem.handleInteractionHint(
@@ -140,13 +140,13 @@ class FrostPeakGame : ApplicationAdapter() {
         clock.draw(batch, font)
         batch.end()
 
-        shapeRenderer.projectionMatrix = camera.combined
+        shapeRenderer.projectionMatrix = worldCamera.combined
         collisionSystem.drawDebug(shapeRenderer)
         player.drawDebug(shapeRenderer)
     }
 
     override fun resize(width: Int, height: Int) {
-        viewport.update(width, height)
+        worldViewport.update(width, height)
     }
 
     override fun dispose() {
