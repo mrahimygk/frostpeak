@@ -124,6 +124,18 @@ class Player(
         shapeRenderer.end()
     }
 
+    fun getInteractionBounds(): Rectangle {
+        val interactionRange = 10f
+        collisionBounds.run {
+            return when (currentDirection) {
+                Direction.UP -> Rectangle(x, y + height, width, interactionRange)
+                Direction.DOWN -> Rectangle(x, y - interactionRange, width, interactionRange)
+                Direction.LEFT -> Rectangle(x - interactionRange, y, interactionRange, height)
+                Direction.RIGHT -> Rectangle(x + width, y, interactionRange, height)
+            }
+        }
+    }
+
     fun getCameraFocusX(): Float = x + Constants.PLAYER_WIDTH / 2f
     fun getCameraFocusY(): Float = y + Constants.PLAYER_HEIGHT / 2f
 

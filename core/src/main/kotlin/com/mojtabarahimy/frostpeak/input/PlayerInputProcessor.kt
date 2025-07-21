@@ -4,7 +4,8 @@ import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.InputAdapter
 
 class PlayerInputProcessor(
-    private val playerMovement: (delta: Float, dx: Float, dy: Float) -> Unit
+    private val playerMovement: (delta: Float, dx: Float, dy: Float) -> Unit,
+    private val onInteract: () -> Unit,
 ) : InputAdapter() {
 
     private var up = false
@@ -18,6 +19,7 @@ class PlayerInputProcessor(
             Keys.D, Keys.RIGHT -> right = true
             Keys.S, Keys.DOWN -> down = true
             Keys.A, Keys.LEFT -> left = true
+            Keys.E -> onInteract()
         }
 
         return true

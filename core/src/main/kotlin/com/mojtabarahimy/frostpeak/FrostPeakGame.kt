@@ -8,18 +8,16 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.MapObject
-import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
-import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mojtabarahimy.frostpeak.collision.CollisionSystem
 import com.mojtabarahimy.frostpeak.controller.CameraController
 import com.mojtabarahimy.frostpeak.entities.Player
 import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
+import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
 import com.mojtabarahimy.frostpeak.util.Constants
 
 class FrostPeakGame : ApplicationAdapter() {
@@ -38,6 +36,7 @@ class FrostPeakGame : ApplicationAdapter() {
     private val afterPlayerLayers = arrayOf("abovePlayer")
 
     private lateinit var collisionSystem: CollisionSystem
+    private lateinit var interactionSystem: InteractionSystem
 
     private lateinit var shapeRenderer: ShapeRenderer
 
@@ -58,6 +57,7 @@ class FrostPeakGame : ApplicationAdapter() {
         map = TmxMapLoader().load("maps/main_house_outdoor.tmx")
 
         collisionSystem = CollisionSystem(map)
+        interactionSystem = InteractionSystem(map)
 
         player = Player(texture, walkSound, collisionSystem)
 
@@ -73,9 +73,15 @@ class FrostPeakGame : ApplicationAdapter() {
                 playerX = 100f
                 playerY = 100f
         */
-        playerInputProcessor = PlayerInputProcessor { delta, dx, dy ->
-            player.update(delta, dx, dy)
-        }
+        playerInputProcessor = PlayerInputProcessor(
+            playerMovement = { delta, dx, dy ->
+                player.update(delta, dx, dy)
+            },
+            onInteract = {
+                val d = interactionSystem.getNearbyInteraction(player.getInteractionBounds())
+                Gdx.app.log("Frostpeak", "interactionSystem: getNearbyInteraction:${d?.name}")
+
+            })
 
         Gdx.input.inputProcessor = playerInputProcessor
 
@@ -86,11 +92,6 @@ class FrostPeakGame : ApplicationAdapter() {
         val x: Float = spawn.properties["x"] as Float
         val y: Float = spawn.properties["y"] as Float
         player.setPosition(x, y)
-
-        val door = objects.get("house_door") as RectangleMapObject
-        val doorRect = door.rectangle
-        //TODO: player.bounds.overlaps(doorRect) to detect interaction
-
         shapeRenderer = ShapeRenderer()
     }
 
