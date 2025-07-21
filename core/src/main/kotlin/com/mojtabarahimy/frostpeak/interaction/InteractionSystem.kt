@@ -32,11 +32,28 @@ class InteractionSystem {
         interactables = temp
     }
 
-    fun handleInteraction(playerBounds: Rectangle, onInteract: () -> Unit) {
+    fun handleInteraction(
+        playerBounds: Rectangle,
+        onInteract: (
+            mapFilePath: String,
+            beforePlayerLayers: Array<String>,
+            afterPlayerLayers: Array<String>
+        ) -> Unit
+    ) {
         getNearbyInteraction(playerBounds)?.let {
             Gdx.app.log("Frostpeak", "interactionSystem: getNearbyInteraction:${it.name}")
             when (it.name) {
-                "house_door" -> onInteract()
+                "house_door" -> onInteract(
+                    "maps/main_house_indoor.tmx",
+                    arrayOf("ground"),
+                    arrayOf("abovePlayer"),
+                )
+
+                "exit_door" -> onInteract(
+                    "maps/main_house_outdoor.tmx",
+                    arrayOf("ground", "trees", "houseBase"),
+                    arrayOf("abovePlayer"),
+                )
             }
         }
     }

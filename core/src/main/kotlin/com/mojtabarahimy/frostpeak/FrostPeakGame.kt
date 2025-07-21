@@ -73,15 +73,19 @@ class FrostPeakGame : ApplicationAdapter() {
                 player.update(delta, dx, dy)
             },
             onInteract = {
-                interactionSystem.handleInteraction(player.getInteractionBounds()) {
-                    gameMap.loadNewMap(
-                        "maps/main_house_indoor.tmx",
-                        beforePlayerLayers = arrayOf("ground"),
-                        afterPlayerLayers = arrayOf("abovePlayer"),
-                    )
-                    initSystems()
-                    spawnPlayer()
-                }
+                interactionSystem
+                    .handleInteraction(
+                        player.getInteractionBounds()
+                    ) { mapFilePath, beforePlayerLayers, afterPlayerLayers ->
+                        gameMap.loadNewMap(
+                            mapFilePath,
+                            beforePlayerLayers,
+                            afterPlayerLayers,
+                        )
+
+                        initSystems()
+                        spawnPlayer()
+                    }
             })
 
         Gdx.input.inputProcessor = playerInputProcessor
