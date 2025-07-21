@@ -1,14 +1,19 @@
 package com.mojtabarahimy.frostpeak.interaction
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.GlyphLayout
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
+import com.badlogic.gdx.math.MathUtils.sin
 import com.badlogic.gdx.math.Rectangle
 
 data class InteractableObject(val name: String, val bounds: Rectangle)
 
 class InteractionSystem(map: TiledMap) {
     private val interactables = mutableListOf<InteractableObject>()
+    private var stateTime = 0f
 
     init {
         val objectLayer = map.layers.get("objects")
@@ -30,7 +35,25 @@ class InteractionSystem(map: TiledMap) {
         }
     }
 
-    private fun getNearbyInteraction(playerBounds: Rectangle): InteractableObject? {
+    fun getNearbyInteraction(playerBounds: Rectangle): InteractableObject? {
         return interactables.find { it.bounds.overlaps(playerBounds) }
+    }
+
+    fun handleInteractionHint(
+        playerBounds: Rectangle,
+        interactableObject: InteractableObject?,
+        batch: SpriteBatch,
+        font: BitmapFont,
+        delta: Float
+    ) {
+        stateTime += delta
+        interactableObject?.run {
+            val layout = GlyphLayout(font, "Press E")
+            val offsetX = -layout.width / 2
+            val baseY = 50f
+            val floatOffset = (sin(stateTime * 2f) * 5f)
+
+            font.draw(batch, layout, playerBounds.x + offsetX, playerBounds.y + baseY+ floatOffset)
+        }
     }
 }

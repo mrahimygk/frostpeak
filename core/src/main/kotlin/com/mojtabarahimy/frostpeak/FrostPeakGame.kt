@@ -2,9 +2,11 @@ package com.mojtabarahimy.frostpeak
 
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.MapObject
@@ -39,6 +41,7 @@ class FrostPeakGame : ApplicationAdapter() {
     private lateinit var interactionSystem: InteractionSystem
 
     private lateinit var shapeRenderer: ShapeRenderer
+    private lateinit var font: BitmapFont
 
     override fun create() {
         batch = SpriteBatch()
@@ -54,8 +57,11 @@ class FrostPeakGame : ApplicationAdapter() {
 
         val texture = Texture("player_sheet.png")
         val walkSound = Gdx.audio.newSound(Gdx.files.internal("sounds/footstep1.wav"))
-        map = TmxMapLoader().load("maps/main_house_outdoor.tmx")
 
+        font = BitmapFont()
+        font.color = Color.WHITE
+
+        map = TmxMapLoader().load("maps/main_house_outdoor.tmx")
         collisionSystem = CollisionSystem(map)
         interactionSystem = InteractionSystem(map)
 
@@ -97,17 +103,19 @@ class FrostPeakGame : ApplicationAdapter() {
         val delta = Gdx.graphics.deltaTime
 
         playerInputProcessor.update(delta, Constants.speed)
+        val interactionBounds = player.getInteractionBounds()
 
         Gdx.gl.glClearColor(0.5f, 0.8f, 1f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         cameraController.update(delta, player.getCameraFocusX(), player.getCameraFocusY())
-
+        val interactableObject = interactionSystem.getNearbyInteraction(interactionBounds)
         renderMapBeforePlayer()
 
         batch.projectionMatrix = camera.combined
         batch.begin()
         player.draw(batch)
+        interactionSystem.handleInteractionHint(interactionBounds, interactableObject, batch, font, delta)
         batch.end()
 
         renderMapAfterPlayer()
