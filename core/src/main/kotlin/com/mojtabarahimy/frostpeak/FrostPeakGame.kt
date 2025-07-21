@@ -78,10 +78,14 @@ class FrostPeakGame : ApplicationAdapter() {
             })
 
         Gdx.input.inputProcessor = playerInputProcessor
+        spawnPlayer()
+        shapeRenderer = ShapeRenderer()
+    }
+
+    private fun spawnPlayer() {
         gameMap.getSpawnPoint().run {
             player.setPosition(x, y)
         }
-        shapeRenderer = ShapeRenderer()
     }
 
     override fun render() {
