@@ -46,12 +46,13 @@ class GameClock {
         }
 
         if (hours >= 24) {
-            hours = 6
             incrementDay()
         }
     }
 
-    private fun incrementDay() {
+    fun incrementDay() {
+        hours = 6
+        minutes = 0
         day += 1
         if (day > 30) {
             day = 1
@@ -67,11 +68,13 @@ class GameClock {
     }
 
     private fun getFormattedDate(): String {
-        return "$dayOfWeek $day ${season.name.replaceFirstChar {
-            if (it.isLowerCase()) it.titlecase(
-                Locale.getDefault()
-            ) else it.toString()
-        }} Y$year"
+        return "$dayOfWeek $day ${
+            season.name.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    Locale.getDefault()
+                ) else it.toString()
+            }
+        } Y$year"
     }
 
     private fun getDayIndex(): Int {

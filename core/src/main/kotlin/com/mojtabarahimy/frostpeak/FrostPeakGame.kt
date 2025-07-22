@@ -18,7 +18,7 @@ class FrostPeakGame : ApplicationAdapter() {
 
     override fun create() {
 
-        worldRenderer = WorldRenderer()
+        worldRenderer = WorldRenderer(clock)
         hudRenderer = HUDRenderer(clock)
     }
 

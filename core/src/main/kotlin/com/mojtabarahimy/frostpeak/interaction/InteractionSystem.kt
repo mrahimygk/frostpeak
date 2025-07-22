@@ -38,7 +38,8 @@ class InteractionSystem {
             mapFilePath: String,
             beforePlayerLayers: Array<String>,
             afterPlayerLayers: Array<String>
-        ) -> Unit
+        ) -> Unit,
+        onNextDay: () -> Unit
     ) {
         getNearbyInteraction(playerBounds)?.let {
             Gdx.app.log("Frostpeak", "interactionSystem: getNearbyInteraction:${it.name}")
@@ -60,7 +61,7 @@ class InteractionSystem {
                 }
 
                 "bed" -> {
-
+                    onNextDay()
                 }
             }
         }

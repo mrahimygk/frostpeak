@@ -14,9 +14,10 @@ import com.mojtabarahimy.frostpeak.entities.Player
 import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
 import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
 import com.mojtabarahimy.frostpeak.map.GameMap
+import com.mojtabarahimy.frostpeak.time.GameClock
 import com.mojtabarahimy.frostpeak.util.Constants
 
-class WorldRenderer {
+class WorldRenderer(clock: GameClock) {
 
 
     private val batch = SpriteBatch()
@@ -69,17 +70,24 @@ class WorldRenderer {
             onInteract = {
                 interactionSystem
                     .handleInteraction(
-                        player.getInteractionBounds()
-                    ) { mapFilePath, beforePlayerLayers, afterPlayerLayers ->
-                        gameMap.loadNewMap(
-                            mapFilePath,
-                            beforePlayerLayers,
-                            afterPlayerLayers,
-                        )
+                        player.getInteractionBounds(),
+                        onNextMap =
+                            { mapFilePath, beforePlayerLayers, afterPlayerLayers ->
+                                gameMap.loadNewMap(
+                                    mapFilePath,
+                                    beforePlayerLayers,
+                                    afterPlayerLayers,
+                                )
 
-                        initSystems()
-                        spawnPlayer()
-                    }
+                                initSystems()
+                                spawnPlayer()
+                            },
+
+                        onNextDay = {
+                            clock.incrementDay()
+                            spawnPlayer()
+                        }
+                    )
             })
 
         Gdx.input.inputProcessor = playerInputProcessor
