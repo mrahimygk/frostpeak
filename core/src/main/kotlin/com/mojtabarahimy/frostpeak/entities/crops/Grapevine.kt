@@ -2,6 +2,7 @@ package com.mojtabarahimy.frostpeak.entities.crops
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 
 class Grapevine(
@@ -33,4 +34,13 @@ class Grapevine(
     fun draw(batch: SpriteBatch) {
         batch.draw(currentStage, position.x, position.y)
     }
+
+    fun getCollisionBounds() =
+        Rectangle(
+            position.x + currentStage.regionWidth / 2.75f,
+            position.y,
+            currentStage.regionWidth.toFloat() / 2.75f,
+            currentStage.regionHeight.toFloat() / 10
+        )
+
 }

@@ -12,7 +12,7 @@ import com.mojtabarahimy.frostpeak.util.Constants
 
 class CollisionSystem {
 
-    private lateinit var colliders: List<Rectangle>
+    private val colliders = mutableListOf<Rectangle>()
 
     fun initMap(map: TiledMap) {
         val temp = mutableListOf<Rectangle>()
@@ -31,7 +31,8 @@ class CollisionSystem {
             }
         }
 
-        colliders = temp
+        colliders.clear()
+        colliders.addAll(temp)
     }
 
     fun checkCollision(rect: Rectangle): Boolean {
@@ -47,5 +48,9 @@ class CollisionSystem {
         }
 
         shapeRenderer.end()
+    }
+
+    fun addCollisionBox(collisionBounds: Rectangle) {
+        colliders.add(collisionBounds)
     }
 }

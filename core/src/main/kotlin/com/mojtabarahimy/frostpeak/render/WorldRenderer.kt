@@ -62,6 +62,7 @@ class WorldRenderer(private val clock: GameClock) {
             afterPlayerLayers = arrayOf("abovePlayer"),
         )
         initSystems()
+        collisionSystem.addCollisionBox(grapevine.getCollisionBounds())
 
         player = Player(texture, walkSound, collisionSystem)
 
