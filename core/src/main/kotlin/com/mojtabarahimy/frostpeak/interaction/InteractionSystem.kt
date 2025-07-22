@@ -51,7 +51,7 @@ class InteractionSystem {
                 )
 
                 "exit_door" -> onNextMap(
-                    "maps/main_house_outdoor.tmx",
+                    "maps/main_house_outdoor_big.tmx",
                     arrayOf("ground", "trees", "houseBase"),
                     arrayOf("abovePlayer"),
                 )

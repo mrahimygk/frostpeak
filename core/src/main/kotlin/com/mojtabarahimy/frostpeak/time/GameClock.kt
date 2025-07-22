@@ -10,11 +10,17 @@ enum class Season { SPRING, SUMMER, FALL, WINTER }
 val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 
 
-class GameClock {
+class GameClock(
+    var onNextDay: ((dayInMonth: Int, dayInYear: Int) -> Unit)? = null,
+    var onNextWeek: ((dayInYear: Int) -> Unit)? = null,
+    var onNextSeason: ((dayInYear: Int, season: Season) -> Unit)? = null,
+    var onNextYear: ((year: Int) -> Unit)? = null,
+) {
 
-    var hours = 6
-    var minutes = 0
-    var day = 1
+    private var hours = 6
+    private var minutes = 0
+    private var day = 1
+    var dayCounter = 0
     var season = Season.SPRING
     var year = 1
 
@@ -54,11 +60,16 @@ class GameClock {
         hours = 6
         minutes = 0
         day += 1
+        dayCounter += 1
+        onNextDay?.invoke(day, dayCounter)
+        if (dayCounter % 7 == 0) onNextWeek?.invoke(dayCounter)
         if (day > 30) {
             day = 1
             season = Season.entries.toTypedArray()[(season.ordinal + 1) % 4]
+            onNextSeason?.invoke(dayCounter, season)
             if (season == Season.SPRING) {
                 year += 1
+                onNextYear?.invoke(year)
             }
         }
     }

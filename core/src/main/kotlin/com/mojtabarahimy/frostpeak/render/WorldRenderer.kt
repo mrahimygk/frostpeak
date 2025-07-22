@@ -6,18 +6,21 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mojtabarahimy.frostpeak.collision.CollisionSystem
 import com.mojtabarahimy.frostpeak.controller.WorldCameraController
 import com.mojtabarahimy.frostpeak.entities.Player
+import com.mojtabarahimy.frostpeak.entities.crops.Grapevine
 import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
 import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
 import com.mojtabarahimy.frostpeak.map.GameMap
 import com.mojtabarahimy.frostpeak.time.GameClock
 import com.mojtabarahimy.frostpeak.util.Constants
 
-class WorldRenderer(clock: GameClock) {
+class WorldRenderer(private val clock: GameClock) {
 
 
     private val batch = SpriteBatch()
@@ -29,6 +32,10 @@ class WorldRenderer(clock: GameClock) {
         }
     private var player: Player
     private var playerInputProcessor: PlayerInputProcessor
+
+    private var grapevine: Grapevine
+    private var hasGrapevine = false
+
     private val worldCameraController = WorldCameraController(worldCamera, worldViewport)
 
     private val gameMap = GameMap()
@@ -44,9 +51,13 @@ class WorldRenderer(clock: GameClock) {
         val texture = Texture("player_sheet.png")
         val walkSound = Gdx.audio.newSound(Gdx.files.internal("sounds/footstep1.wav"))
 
+        val grapevineAtlas =
+            TextureAtlas(Gdx.files.internal("crops/grapevine/grapevine_atlas.atlas"))
+
+        grapevine = Grapevine(Vector2(300f, 50f), grapevineAtlas)
 
         gameMap.initMap(
-            "maps/main_house_outdoor.tmx",
+            "maps/main_house_outdoor_big.tmx",
             beforePlayerLayers = arrayOf("ground", "trees", "houseBase"),
             afterPlayerLayers = arrayOf("abovePlayer"),
         )
@@ -81,6 +92,7 @@ class WorldRenderer(clock: GameClock) {
 
                                 initSystems()
                                 spawnPlayer()
+                                hasGrapevine = mapHasGrapevine()
                             },
 
                         onNextDay = {
@@ -95,6 +107,16 @@ class WorldRenderer(clock: GameClock) {
 
         font = BitmapFont()
         font.color = Color.WHITE
+
+        hasGrapevine = mapHasGrapevine()
+
+        clock.onNextDay = { _: Int, dayInYear: Int ->
+            grapevine.checkGrowth(dayInYear)
+        }
+    }
+
+    private fun mapHasGrapevine(): Boolean {
+        return gameMap.map.layers.map { it.name }.contains("grapevine")
     }
 
     fun render(delta: Float) {
@@ -109,6 +131,9 @@ class WorldRenderer(clock: GameClock) {
 
         batch.projectionMatrix = worldCamera.combined
         batch.begin()
+        if (hasGrapevine) {
+            grapevine.draw(batch)
+        }
         player.draw(batch)
         batch.end()
 
@@ -151,5 +176,6 @@ class WorldRenderer(clock: GameClock) {
         player.texture.dispose()
         player.walkSound.dispose()
         gameMap.dispose()
+        grapevine.dispose()
     }
 }

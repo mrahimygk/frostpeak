@@ -1,0 +1,76 @@
+
+grapevine_atlas.png
+size: 1024, 1024
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+grapevine_tree_stage
+  rotate: false
+  xy: 2, 616
+  size: 200, 305
+  orig: 200, 305
+  offset: 0, 0
+  index: 0
+grapevine_tree_stage
+  rotate: false
+  xy: 2, 616
+  size: 200, 305
+  orig: 200, 305
+  offset: 0, 0
+  index: 1
+grapevine_tree_stage
+  rotate: false
+  xy: 2, 309
+  size: 200, 305
+  orig: 200, 305
+  offset: 0, 0
+  index: 2
+grapevine_tree_stage
+  rotate: false
+  xy: 204, 616
+  size: 200, 305
+  orig: 200, 305
+  offset: 0, 0
+  index: 3
+grapevine_tree_stage
+  rotate: false
+  xy: 2, 2
+  size: 200, 305
+  orig: 200, 305
+  offset: 0, 0
+  index: 4
+grapevine_tree_stage
+  rotate: false
+  xy: 204, 309
+  size: 200, 305
+  orig: 200, 305
+  offset: 0, 0
+  index: 5
+grapevine_tree_stage
+  rotate: false
+  xy: 204, 309
+  size: 200, 305
+  orig: 200, 305
+  offset: 0, 0
+  index: 6
+grapevine_tree_stage
+  rotate: false
+  xy: 406, 616
+  size: 200, 305
+  orig: 200, 305
+  offset: 0, 0
+  index: 7
+grapevine_tree_stage
+  rotate: false
+  xy: 204, 2
+  size: 200, 305
+  orig: 200, 305
+  offset: 0, 0
+  index: 8
+grapevine_tree_stage
+  rotate: false
+  xy: 204, 2
+  size: 200, 305
+  orig: 200, 305
+  offset: 0, 0
+  index: 9
