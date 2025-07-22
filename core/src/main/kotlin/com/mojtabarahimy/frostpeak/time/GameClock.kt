@@ -3,6 +3,7 @@ package com.mojtabarahimy.frostpeak.time
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.mojtabarahimy.frostpeak.util.Constants
+import java.util.Locale
 
 enum class Season { SPRING, SUMMER, FALL, WINTER }
 
@@ -54,19 +55,23 @@ class GameClock {
         day += 1
         if (day > 30) {
             day = 1
-            season = Season.values()[(season.ordinal + 1) % 4]
+            season = Season.entries.toTypedArray()[(season.ordinal + 1) % 4]
             if (season == Season.SPRING) {
                 year += 1
             }
         }
     }
 
-    fun getTimeString(): String {
-        return String.format("%02d:%02d", hours, minutes)
+    private fun getTimeString(): String {
+        return String.format(Locale.US, "%02d:%02d", hours, minutes)
     }
 
-    fun getFormattedDate(): String {
-        return "$dayOfWeek $day ${season.name.capitalize()} Y$year"
+    private fun getFormattedDate(): String {
+        return "$dayOfWeek $day ${season.name.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(
+                Locale.getDefault()
+            ) else it.toString()
+        }} Y$year"
     }
 
     private fun getDayIndex(): Int {
@@ -84,7 +89,7 @@ class GameClock {
 
         font.draw(
             batch,
-            "${getFormattedDate()}",
+            getFormattedDate(),
             Constants.worldWidth / 3f,
             Constants.worldHeight / 3f - 20f
         )
