@@ -45,7 +45,7 @@ class InteractionSystem {
             when (it.name) {
                 "house_door" -> onInteract(
                     "maps/main_house_indoor.tmx",
-                    arrayOf("ground"),
+                    arrayOf("ground", "bed"),
                     arrayOf("abovePlayer"),
                 )
 
