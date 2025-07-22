@@ -133,7 +133,7 @@ class WorldRenderer(private val clock: GameClock) {
         batch.projectionMatrix = worldCamera.combined
         batch.begin()
         if (hasGrapevine) {
-            grapevine.draw(batch)
+            grapevine.drawBase(batch)
         }
         player.draw(batch)
         batch.end()
@@ -141,6 +141,9 @@ class WorldRenderer(private val clock: GameClock) {
         gameMap.renderMapAfterPlayer(worldCamera)
 
         batch.begin()
+        if (hasGrapevine) {
+            grapevine.drawAbovePlayer(batch)
+        }
         interactionSystem.handleInteractionHint(
             interactionBounds,
             interactableObject,
