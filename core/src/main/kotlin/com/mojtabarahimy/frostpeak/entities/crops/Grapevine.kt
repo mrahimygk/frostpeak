@@ -12,10 +12,13 @@ class Grapevine(
     private var daysForNextStage: Int = 2
 ) {
 
+    private var currentStage = atlas.regions.get(growthStage)
+
     private fun grow() {
         weeksPassed++
         if (growthStage < atlas.regions.size - 1) {
             growthStage++
+            currentStage = atlas.regions.get(growthStage)
         }
     }
 
@@ -28,6 +31,6 @@ class Grapevine(
     }
 
     fun draw(batch: SpriteBatch) {
-        batch.draw(atlas.regions.get(growthStage), position.x, position.y)
+        batch.draw(currentStage, position.x, position.y)
     }
 }
