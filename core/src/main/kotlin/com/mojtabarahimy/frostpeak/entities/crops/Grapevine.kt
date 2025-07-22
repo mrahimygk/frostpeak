@@ -10,7 +10,6 @@ class Grapevine(
     private val position: Vector2,
     private val atlas: TextureAtlas,
     private var growthStage: Int = 0,
-    private var weeksPassed: Int = 0,
     private var daysForNextStage: Int = 2
 ) {
 
@@ -24,7 +23,6 @@ class Grapevine(
     }
 
     private fun grow() {
-        weeksPassed++
         if (growthStage < atlas.regions.size - 1) {
             growthStage++
             currentStageFull = getCurrentStageRegion()
