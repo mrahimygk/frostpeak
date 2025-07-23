@@ -16,12 +16,36 @@ class FruitParticle(
 
     private var lifetime = 2f // seconds
 
+    private var scaleX = 1f
+    private var scaleY = 1f
+    private var squashTimer = 0f
+
     private var elapsed = 0f
     var isAlive = true
 
     fun update(delta: Float) {
         velocity.y -= 300f * delta // gravity
         position.mulAdd(velocity, delta)
+
+        if (velocity.y < 0 && position.y > 0f) {
+            scaleX = 0.9f
+            scaleY = 1.2f
+        }
+
+        if (position.y < 1f && velocity.y < 0f && squashTimer == 0f) {
+            scaleX = 1.3f
+            scaleY = 0.7f
+            squashTimer = 0.1f // 100ms squash
+            velocity.y = 0f // simulate hit ground
+        }
+
+        if (squashTimer > 0f) {
+            squashTimer -= delta
+            if (squashTimer <= 0f) {
+                scaleX = 1f
+                scaleY = 1f
+            }
+        }
 
         elapsed += delta
 
@@ -32,7 +56,17 @@ class FruitParticle(
     }
 
     fun draw(batch: SpriteBatch) {
-        batch.draw(texture, position.x, position.y)
+        batch.draw(
+            texture,
+            position.x,
+            position.y,
+            texture.regionWidth / 2f, texture.regionHeight / 2f, // origin
+            texture.regionWidth.toFloat(),
+            texture.regionHeight.toFloat(),
+            scaleX,
+            scaleY,
+            0f
+        )
     }
 
     fun isBehindPlayer(playerY: Float): Boolean {
