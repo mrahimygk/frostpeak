@@ -14,6 +14,7 @@ import com.mojtabarahimy.frostpeak.controller.WorldCameraController
 import com.mojtabarahimy.frostpeak.entities.Player
 import com.mojtabarahimy.frostpeak.entities.crops.Grapevine
 import com.mojtabarahimy.frostpeak.entities.fruit.FruitParticleSystem
+import com.mojtabarahimy.frostpeak.entities.tools.ToolTarget
 import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
 import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
 import com.mojtabarahimy.frostpeak.map.GameMap
@@ -83,6 +84,8 @@ class WorldRenderer(private val clock: GameClock) {
 
 
         playerInputProcessor = PlayerInputProcessor(
+            getWorldTargets(),
+            player,
             playerMovement = { delta, dx, dy ->
                 player.update(delta, dx, dy)
             },
@@ -123,6 +126,11 @@ class WorldRenderer(private val clock: GameClock) {
         clock.onNextDay = { _: Int, dayInYear: Int ->
             grapevine.checkGrowth(dayInYear)
         }
+    }
+
+    private fun getWorldTargets(): List<ToolTarget> {
+        if (!mapHasGrapevine()) return emptyList()
+        return listOf(grapevine)
     }
 
     private fun checkAddGrapevineToSystems(mapFilePath: String) {

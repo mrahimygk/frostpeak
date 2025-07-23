@@ -5,12 +5,15 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
+import com.mojtabarahimy.frostpeak.entities.tools.Axe
+import com.mojtabarahimy.frostpeak.entities.tools.Tool
+import com.mojtabarahimy.frostpeak.entities.tools.ToolTarget
 
 abstract class Tree(
     private val position: Vector2,
     private var daysForNextStage: Int,
     private var growthStage: Int = 0
-): Drawable, Interactable {
+) : Drawable, Interactable, ToolTarget {
     abstract val atlas: TextureAtlas
     abstract val fruitTexture: TextureRegion
 
@@ -38,6 +41,18 @@ abstract class Tree(
         currentStageFull.regionWidth,
         currentStageFull.regionHeight - 24
     )
+
+    override val x: Float
+        get() = getCollisionBounds().x
+    override val y: Float
+        get() = getCollisionBounds().y
+
+    override fun onToolUsed(tool: Tool) {
+        if (tool is Axe) {
+            //TODO: check for growth stage etc
+            println("Using tool on a ${this.javaClass.simpleName}")
+        }
+    }
 
     private fun grow() {
         if (growthStage < atlas.regions.size - 1) {

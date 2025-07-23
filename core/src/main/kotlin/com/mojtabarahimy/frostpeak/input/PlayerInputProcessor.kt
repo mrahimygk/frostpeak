@@ -2,8 +2,12 @@ package com.mojtabarahimy.frostpeak.input
 
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.InputAdapter
+import com.mojtabarahimy.frostpeak.entities.Player
+import com.mojtabarahimy.frostpeak.entities.tools.ToolTarget
 
 class PlayerInputProcessor(
+    private val targets: List<ToolTarget>,
+    private val player: Player,
     private val playerMovement: (delta: Float, dx: Float, dy: Float) -> Unit,
     private val onInteract: () -> Unit,
 ) : InputAdapter() {
@@ -20,6 +24,9 @@ class PlayerInputProcessor(
             Keys.S, Keys.DOWN -> down = true
             Keys.A, Keys.LEFT -> left = true
             Keys.E -> onInteract()
+            Keys.Q -> player.switchToolBackward()
+            Keys.R -> player.switchToolForward()
+            Keys.Z -> player.useTool(targets)
         }
 
         return true

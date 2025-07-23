@@ -8,7 +8,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.math.Vector2
 import com.mojtabarahimy.frostpeak.collision.CollisionSystem
+import com.mojtabarahimy.frostpeak.entities.tools.ToolInventory
+import com.mojtabarahimy.frostpeak.entities.tools.ToolTarget
 import com.mojtabarahimy.frostpeak.util.Constants
 
 class Player(
@@ -63,6 +66,8 @@ class Player(
 
     private val collisionBounds = Rectangle()
 
+    private val toolInventory = ToolInventory()
+
     fun update(delta: Float, dx: Float, dy: Float) {
         isMoving = dx != 0f || dy != 0f
 
@@ -91,7 +96,7 @@ class Player(
 
         val w = downFrames[0].regionWidth
         val h = downFrames[0].regionHeight
-        collisionBounds.set(Rectangle(newX + w/4f, newY+h/6f, w/2f, h/6f))
+        collisionBounds.set(Rectangle(newX + w / 4f, newY + h / 6f, w / 2f, h / 6f))
         if (!collisionSystem.checkCollision(collisionBounds)) {
             x = newX
             y = newY
@@ -142,5 +147,35 @@ class Player(
     fun setPosition(x: Float, y: Float) {
         this.x = x
         this.y = y
+    }
+
+    fun switchToolForward() {
+        toolInventory.nextTool()
+    }
+
+    fun switchToolBackward() {
+        toolInventory.previousTool()
+    }
+
+    fun useTool(targets: List<ToolTarget>) {
+        toolInventory.useSelectedTool(detectToolTarget(targets))
+    }
+
+    private fun detectToolTarget(objects: List<ToolTarget>): ToolTarget? {
+        val detectionDistance = 32f
+        val playerFacingX = x + when (currentDirection) {
+            Direction.LEFT -> -detectionDistance
+            Direction.RIGHT -> detectionDistance
+            else -> 0f
+        }
+        val playerFacingY = y + when (currentDirection) {
+            Direction.UP -> detectionDistance
+            Direction.DOWN -> -detectionDistance
+            else -> 0f
+        }
+
+        return objects.firstOrNull {
+            Vector2(it.x, it.y).dst(playerFacingX, playerFacingY) < 20f
+        }
     }
 }
