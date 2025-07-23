@@ -10,8 +10,9 @@ abstract class Tree(
     private val position: Vector2,
     private var daysForNextStage: Int,
     private var growthStage: Int = 0
-): Drawable {
+): Drawable, Interactable {
     abstract val atlas: TextureAtlas
+    abstract val fruitTexture: TextureRegion
 
     private var currentStageFull: TextureAtlas.AtlasRegion = getCurrentStageRegion()
     private var currentStageTrunk = getCurrentStageTrunk()
@@ -71,4 +72,6 @@ abstract class Tree(
     fun dispose() {
         atlas.dispose()
     }
+
+    fun isRipe() = growthStage == atlas.regions.size - 1
 }

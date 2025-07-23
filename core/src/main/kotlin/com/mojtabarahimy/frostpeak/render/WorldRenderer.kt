@@ -13,6 +13,7 @@ import com.mojtabarahimy.frostpeak.collision.CollisionSystem
 import com.mojtabarahimy.frostpeak.controller.WorldCameraController
 import com.mojtabarahimy.frostpeak.entities.Player
 import com.mojtabarahimy.frostpeak.entities.crops.Grapevine
+import com.mojtabarahimy.frostpeak.entities.fruit.FruitParticleSystem
 import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
 import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
 import com.mojtabarahimy.frostpeak.map.GameMap
@@ -40,6 +41,7 @@ class WorldRenderer(private val clock: GameClock) {
     private val gameMap = GameMap()
     private val collisionSystem = CollisionSystem()
     private val interactionSystem = InteractionSystem()
+    private val particleSystem = FruitParticleSystem()
 
     private val shapeRenderer = ShapeRenderer()
 
@@ -51,14 +53,23 @@ class WorldRenderer(private val clock: GameClock) {
         val walkSound = Gdx.audio.newSound(Gdx.files.internal("sounds/footstep1.wav"))
 
         grapevine = Grapevine(Vector2(300f, 50f))
+        grapevine.onInteract = {
+            particleSystem.spawn(
+                grapevine.getCollisionBounds().getCenter(Vector2()).add(0f, 48f),
+                5,
+                grapevine.fruitTexture
+            )
+        }
+
+        val mapName = "maps/main_house_outdoor_big.tmx"
 
         gameMap.initMap(
-            "maps/main_house_outdoor_big.tmx",
+            mapName,
             beforePlayerLayers = arrayOf("ground", "trees", "houseBase"),
             afterPlayerLayers = arrayOf("abovePlayer"),
         )
         initSystems()
-        collisionSystem.addCollisionBox(grapevine.getCollisionBounds())
+        checkAddGrapevineToSystems(mapName)
 
         player = Player(texture, walkSound, collisionSystem)
 
@@ -87,7 +98,9 @@ class WorldRenderer(private val clock: GameClock) {
                                     afterPlayerLayers,
                                 )
 
+
                                 initSystems()
+                                checkAddGrapevineToSystems(mapFilePath)
                                 spawnPlayer()
                                 hasGrapevine = mapHasGrapevine()
                             },
@@ -112,6 +125,19 @@ class WorldRenderer(private val clock: GameClock) {
         }
     }
 
+    private fun checkAddGrapevineToSystems(mapFilePath: String) {
+        if (mapFilePath.contains("maps/main_house_outdoor_big.tmx")) {
+            collisionSystem.addCollisionBox(grapevine.getCollisionBounds())
+
+            interactionSystem.addInteractable(
+                "grapevine",
+                grapevine.getCollisionBounds()
+            ) {
+                grapevine.onInteract()
+            }
+        }
+    }
+
     private fun mapHasGrapevine(): Boolean {
         return gameMap.map.layers.map { it.name }.contains("grapevine")
     }
@@ -124,6 +150,8 @@ class WorldRenderer(private val clock: GameClock) {
         worldCameraController.update(delta, player.getCameraFocusX(), player.getCameraFocusY())
 
         val interactableObject = interactionSystem.getNearbyInteraction(interactionBounds)
+        particleSystem.update(delta)
+
         gameMap.renderMapBeforePlayer(worldCamera)
 
         batch.projectionMatrix = worldCamera.combined
@@ -131,6 +159,7 @@ class WorldRenderer(private val clock: GameClock) {
         if (hasGrapevine) {
             grapevine.drawTrunk(batch)
         }
+        particleSystem.drawBehindPlayer(batch, player.y)
         player.draw(batch)
         batch.end()
 
@@ -140,6 +169,7 @@ class WorldRenderer(private val clock: GameClock) {
         if (hasGrapevine) {
             grapevine.drawAbovePlayer(batch)
         }
+        particleSystem.drawAbovePlayer(batch, player.y)
         interactionSystem.handleInteractionHint(
             interactionBounds,
             interactableObject,
@@ -152,6 +182,7 @@ class WorldRenderer(private val clock: GameClock) {
 
         shapeRenderer.projectionMatrix = worldCamera.combined
         collisionSystem.drawDebug(shapeRenderer)
+        interactionSystem.drawDebug(shapeRenderer)
         player.drawDebug(shapeRenderer)
     }
 

@@ -1,18 +1,24 @@
 package com.mojtabarahimy.frostpeak.interaction
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.math.MathUtils.sin
 import com.badlogic.gdx.math.Rectangle
 
-data class InteractableObject(val name: String, val bounds: Rectangle)
+data class InteractableObject(
+    val name: String,
+    val bounds: Rectangle,
+    val onInteract: (() -> Unit)? = null
+)
 
 class InteractionSystem {
-    private lateinit var interactables: List<InteractableObject>
+    private val interactables = mutableListOf<InteractableObject>()
     private var stateTime = 0f
 
     fun initMap(map: TiledMap) {
@@ -29,7 +35,8 @@ class InteractionSystem {
             //TODO: add other interactables (i.e CircleMapObjects
         }
 
-        interactables = temp
+        interactables.clear()
+        interactables.addAll(temp)
     }
 
     fun handleInteraction(
@@ -43,6 +50,13 @@ class InteractionSystem {
     ) {
         getNearbyInteraction(playerBounds)?.let {
             Gdx.app.log("Frostpeak", "interactionSystem: getNearbyInteraction:${it.name}")
+
+            //TODO: if invoke() returns false, we do not return@handleInteraction, and we let the code continue
+            it.onInteract?.let {
+                it.invoke()
+                return
+            }
+
             when (it.name) {
                 "house_door" -> onNextMap(
                     "maps/main_house_indoor.tmx",
@@ -87,5 +101,21 @@ class InteractionSystem {
 
             font.draw(batch, layout, playerBounds.x + offsetX, playerBounds.y + baseY + floatOffset)
         }
+    }
+
+    fun addInteractable(name: String, interactable: Rectangle, onInteract: (() -> Unit)) {
+        interactables.add(InteractableObject(name, interactable, onInteract))
+    }
+
+    fun drawDebug(shapeRenderer: ShapeRenderer) {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line)
+        shapeRenderer.color = Color.GREEN
+
+        interactables.forEach {
+            val rect = it.bounds
+            shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height)
+        }
+
+        shapeRenderer.end()
     }
 }
