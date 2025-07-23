@@ -2,6 +2,7 @@ package com.mojtabarahimy.frostpeak.entities.fruit
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 
@@ -18,7 +19,9 @@ class FruitParticle(
 
     private var scaleX = 1f
     private var scaleY = 1f
-    private var squashTimer = 0f
+    private var squashTimeTotal = 0.2f
+    private var squashTimeElapsed = 0f
+    private var squashActive = false
 
     private var elapsed = 0f
     var isAlive = true
@@ -27,24 +30,28 @@ class FruitParticle(
         velocity.y -= 300f * delta // gravity
         position.mulAdd(velocity, delta)
 
-        if (velocity.y < 0 && position.y > 0f) {
-            scaleX = 0.9f
-            scaleY = 1.2f
+        if (position.y < 1f && velocity.y < 0f && !squashActive) {
+            velocity.y = 0f
+            squashTimeElapsed = 0f
+            squashActive = true
         }
 
-        if (position.y < 1f && velocity.y < 0f && squashTimer == 0f) {
-            scaleX = 1.3f
-            scaleY = 0.7f
-            squashTimer = 0.1f // 100ms squash
-            velocity.y = 0f // simulate hit ground
-        }
+        if (squashActive) {
+            squashTimeElapsed += delta
+            val t = squashTimeElapsed / squashTimeTotal
 
-        if (squashTimer > 0f) {
-            squashTimer -= delta
-            if (squashTimer <= 0f) {
+            if (t >= 1f) {
+                squashActive = false
                 scaleX = 1f
                 scaleY = 1f
+            } else {
+                val interp = Interpolation.swingOut.apply(1f - t) // OR bounceOut
+                scaleX = 1f + 0.3f * interp
+                scaleY = 1f - 0.3f * interp
             }
+        } else {
+            scaleX = if (velocity.y < -50f) 0.9f else 1f
+            scaleY = if (velocity.y < -50f) 1.2f else 1f
         }
 
         elapsed += delta
