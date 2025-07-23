@@ -26,6 +26,8 @@ class PlayerInputProcessor(
             Keys.E -> onInteract()
             Keys.Q -> player.switchToolBackward()
             Keys.R -> player.switchToolForward()
+            Keys.NUM_1 -> player.toolInventory.selectTool(0)
+            Keys.NUM_2 -> player.toolInventory.selectTool(1)
             Keys.Z -> player.useTool(targets)
         }
 

@@ -30,4 +30,10 @@ class ToolInventory {
     fun useSelectedTool(toolTarget: ToolTarget?) {
         selectedTool?.use(toolTarget)
     }
+
+    fun selectTool(i: Int) {
+        selectedIndex = i
+        println("Tool is ${selectedTool?.name}")
+
+    }
 }
