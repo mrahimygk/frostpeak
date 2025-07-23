@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.FitViewport
@@ -51,10 +50,7 @@ class WorldRenderer(private val clock: GameClock) {
         val texture = Texture("player_sheet.png")
         val walkSound = Gdx.audio.newSound(Gdx.files.internal("sounds/footstep1.wav"))
 
-        val grapevineAtlas =
-            TextureAtlas(Gdx.files.internal("crops/grapevine/grapevine_atlas.atlas"))
-
-        grapevine = Grapevine(Vector2(300f, 50f), grapevineAtlas)
+        grapevine = Grapevine(Vector2(300f, 50f))
 
         gameMap.initMap(
             "maps/main_house_outdoor_big.tmx",
@@ -133,7 +129,7 @@ class WorldRenderer(private val clock: GameClock) {
         batch.projectionMatrix = worldCamera.combined
         batch.begin()
         if (hasGrapevine) {
-            grapevine.drawBase(batch)
+            grapevine.drawTrunk(batch)
         }
         player.draw(batch)
         batch.end()
