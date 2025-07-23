@@ -1,8 +1,12 @@
 package com.mojtabarahimy.frostpeak.entities.tools
 
+import com.badlogic.gdx.graphics.Texture
+
 class ToolInventory {
-    private val tools = mutableListOf<Tool>()
+    val tools = mutableListOf<Tool>()
     private var selectedIndex = 0
+
+    val texture = Texture("inventory/inventory_onscreen.png")
 
     init {
         tools.add(Axe())
@@ -10,7 +14,7 @@ class ToolInventory {
         tools.add(Shovel())
     }
 
-    private val selectedTool: Tool?
+    val selectedTool: Tool?
         get() = if (tools.isNotEmpty()) tools[selectedIndex % tools.size] else null
 
     fun nextTool() {

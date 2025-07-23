@@ -66,7 +66,7 @@ class Player(
 
     private val collisionBounds = Rectangle()
 
-    private val toolInventory = ToolInventory()
+    val toolInventory = ToolInventory()
 
     fun update(delta: Float, dx: Float, dy: Float) {
         isMoving = dx != 0f || dy != 0f

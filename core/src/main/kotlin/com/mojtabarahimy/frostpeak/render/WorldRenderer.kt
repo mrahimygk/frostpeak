@@ -31,7 +31,8 @@ class WorldRenderer(private val clock: GameClock) {
             it.apply()
             worldCamera.setToOrtho(false, it.worldWidth, it.worldHeight)
         }
-    private var player: Player
+
+    var player: Player
     private var playerInputProcessor: PlayerInputProcessor
 
     private var grapevine: Grapevine
