@@ -6,6 +6,8 @@ class ToolInventory {
 
     init {
         tools.add(Axe())
+        tools.add(Knife())
+        tools.add(Shovel())
     }
 
     private val selectedTool: Tool?
