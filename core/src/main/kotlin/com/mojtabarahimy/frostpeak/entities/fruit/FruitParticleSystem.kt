@@ -8,6 +8,8 @@ class FruitParticleSystem {
 
     private val particles = mutableListOf<FruitParticle>()
 
+    var onComplete: (() -> Unit)? = null
+
     fun spawn(position: Vector2, count: Int, texture: TextureRegion) {
         repeat(count) {
             particles.add(FruitParticle(position.cpy(), texture))
@@ -17,6 +19,9 @@ class FruitParticleSystem {
     fun update(delta: Float) {
         particles.forEach { it.update(delta) }
         particles.removeIf { !it.isAlive }
+        if (particles.isEmpty()) {
+            onComplete?.invoke()
+        }
     }
 
     fun drawBehindPlayer(batch: SpriteBatch, playerY: Float) {

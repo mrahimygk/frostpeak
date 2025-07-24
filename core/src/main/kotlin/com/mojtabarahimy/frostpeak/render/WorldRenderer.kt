@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mojtabarahimy.frostpeak.collision.CollisionSystem
@@ -14,6 +15,7 @@ import com.mojtabarahimy.frostpeak.controller.WorldCameraController
 import com.mojtabarahimy.frostpeak.entities.Player
 import com.mojtabarahimy.frostpeak.entities.crops.Grapevine
 import com.mojtabarahimy.frostpeak.entities.fruit.FruitParticleSystem
+import com.mojtabarahimy.frostpeak.entities.fruit.harvest.DroppedItem
 import com.mojtabarahimy.frostpeak.entities.tools.ToolTarget
 import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
 import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
@@ -48,6 +50,8 @@ class WorldRenderer(private val clock: GameClock) {
 
     private var font: BitmapFont
 
+    private val droppedItems = mutableListOf<DroppedItem>()
+
     init {
 
         val texture = Texture("player_sheet.png")
@@ -55,11 +59,33 @@ class WorldRenderer(private val clock: GameClock) {
 
         grapevine = Grapevine(Vector2(300f, 50f))
         grapevine.onInteract = {
+            val grapevinePosition = grapevine.getCollisionBounds()
+            val position = grapevinePosition.getCenter(Vector2())
             particleSystem.spawn(
-                grapevine.getCollisionBounds().getCenter(Vector2()).add(0f, 48f),
+                position.add(0f, 48f),
                 5,
                 grapevine.fruitTexture
             )
+
+            particleSystem.onComplete = {
+
+                val item = DroppedItem(
+                    grapevine.fruitTexture,
+                    grapevinePosition.x - 20f,
+                    grapevinePosition.y,
+                    "grape"
+                )
+                droppedItems.add(item)
+
+                collisionSystem.addCollisionBox(
+                    Rectangle(
+                        item.x,
+                        item.y,
+                        grapevine.fruitTexture.regionWidth.toFloat(),
+                        grapevine.fruitTexture.regionHeight.toFloat()
+                    )
+                )
+            }
         }
 
         val mapName = "maps/main_house_outdoor_big.tmx"
@@ -168,6 +194,7 @@ class WorldRenderer(private val clock: GameClock) {
             grapevine.drawBehindPlayer(batch)
         }
         particleSystem.drawBehindPlayer(batch, player.y)
+        droppedItems.forEach { it.render(batch) }
         player.draw(batch)
         batch.end()
 
