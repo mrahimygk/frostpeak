@@ -8,12 +8,14 @@ import com.badlogic.gdx.math.Vector2
 import com.mojtabarahimy.frostpeak.entities.tools.Axe
 import com.mojtabarahimy.frostpeak.entities.tools.Tool
 import com.mojtabarahimy.frostpeak.entities.tools.ToolTarget
+import com.mojtabarahimy.frostpeak.render.Drawable
+import com.mojtabarahimy.frostpeak.render.MultipleLayerDrawable
 
 abstract class Tree(
     private val position: Vector2,
     private var daysForNextStage: Int,
     private var growthStage: Int = 0
-) : Drawable, Interactable, ToolTarget {
+) : Drawable by MultipleLayerDrawable(), Interactable, ToolTarget {
     abstract val atlas: TextureAtlas
     abstract val fruitTexture: TextureRegion
 
@@ -67,13 +69,12 @@ abstract class Tree(
         if (daysPassed % daysForNextStage == 0) grow()
     }
 
-
-    override fun drawTrunk(batch: SpriteBatch) {
-        batch.draw(currentStageTrunk, position.x, position.y)
+    fun drawBehindPlayer(batch: SpriteBatch) {
+        drawBehindPlayer(batch, currentStageTrunk, position.x, position.y)
     }
 
-    override fun drawAbovePlayer(batch: SpriteBatch) {
-        batch.draw(currentStageAbovePlayer, position.x, position.y + 24)
+    fun drawAbovePlayer(batch: SpriteBatch) {
+        drawAbovePlayer(batch, currentStageAbovePlayer, position.x, position.y + 24)
     }
 
     fun getCollisionBounds() =

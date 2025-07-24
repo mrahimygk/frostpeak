@@ -23,7 +23,6 @@ import com.mojtabarahimy.frostpeak.util.Constants
 
 class WorldRenderer(private val clock: GameClock) {
 
-
     private val batch = SpriteBatch()
     private val worldCamera = OrthographicCamera()
     private val worldViewport: FitViewport =
@@ -166,7 +165,7 @@ class WorldRenderer(private val clock: GameClock) {
         batch.projectionMatrix = worldCamera.combined
         batch.begin()
         if (hasGrapevine) {
-            grapevine.drawTrunk(batch)
+            grapevine.drawBehindPlayer(batch)
         }
         particleSystem.drawBehindPlayer(batch, player.y)
         player.draw(batch)
