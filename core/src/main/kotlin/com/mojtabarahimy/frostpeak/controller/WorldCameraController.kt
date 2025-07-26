@@ -43,10 +43,10 @@ class WorldCameraController(
         val halfWidth = viewport.worldWidth / 2f
         val halfHeight = viewport.worldHeight / 2f
 
-        if (camera.position.x > halfWidth || camera.position.x < mapWidth - halfWidth)
-            camera.position.x = camera.position.x.coerceIn(halfWidth, mapWidth - halfWidth)
-        if (camera.position.y > halfHeight || camera.position.y < mapHeight - halfHeight)
-            camera.position.y = camera.position.y.coerceIn(halfHeight, mapHeight - halfHeight)
+        camera.position.x = if (mapWidth <= viewport.worldWidth) mapWidth / 2f
+        else camera.position.x.coerceIn(halfWidth, mapWidth - halfWidth)
+        camera.position.y = if (mapHeight <= viewport.worldHeight) mapHeight / 2f + 32f
+        else camera.position.y.coerceIn(halfHeight, mapHeight - halfHeight)
 
         camera.update()
     }
