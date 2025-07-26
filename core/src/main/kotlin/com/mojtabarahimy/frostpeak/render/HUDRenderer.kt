@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mojtabarahimy.frostpeak.entities.tools.ToolInventory
 import com.mojtabarahimy.frostpeak.time.GameClock
@@ -24,12 +25,14 @@ class HUDRenderer(
         color = Color.WHITE
     }
 
-    fun render(inventory: ToolInventory) {
+    private val projectionVector = Vector3()
+
+    fun render(inventory: ToolInventory, playerY: Float) {
         uiCamera.update()
         batch.projectionMatrix = uiCamera.combined
         batch.begin()
         clock.draw(batch, font)
-        drawInventory(inventory)
+        drawInventory(inventory, playerY)
         batch.end()
     }
 
@@ -42,9 +45,12 @@ class HUDRenderer(
         batch.dispose()
     }
 
-    private fun drawInventory(inventory: ToolInventory) {
+    private fun drawInventory(inventory: ToolInventory, playerY: Float) {
+        val playerScreenY = uiCamera.project(projectionVector.set(0f, playerY, 0f)).y
         val inventoryX = -inventory.texture.width / 2f
-        val inventoryY = -Constants.worldHeight / 2f + 32f
+        val inventoryY =
+            if (playerScreenY < Constants.worldHeight / 1.33f) Constants.worldHeight / 4f
+            else -Constants.worldHeight / 2f + 32f
         batch.draw(inventory.texture, inventoryX, inventoryY)
 
         inventory.tools.forEachIndexed { index, tool ->
