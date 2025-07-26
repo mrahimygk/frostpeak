@@ -47,7 +47,7 @@ class HUDRenderer(
 
     private fun drawInventory(inventory: ToolInventory, playerY: Float) {
         val playerScreenY = uiCamera.project(projectionVector.set(0f, playerY, 0f)).y
-        val inventoryX = -inventory.texture.width / 2f
+        val inventoryX = -Constants.worldWidth / 2f + 32f
         val inventoryY =
             if (playerScreenY < Constants.worldHeight / 1.33f) Constants.worldHeight / 4f
             else -Constants.worldHeight / 2f + 32f
