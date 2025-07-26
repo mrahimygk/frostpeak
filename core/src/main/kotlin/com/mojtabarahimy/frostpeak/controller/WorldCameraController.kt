@@ -5,14 +5,14 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.mojtabarahimy.frostpeak.util.Constants
 
-class WorldCameraController (
+class WorldCameraController(
     private val camera: OrthographicCamera,
     private val viewport: Viewport,
     private val lerpSpeed: Float = 5f
-){
+) {
     private val targetPos = Vector2(camera.position.x, camera.position.y)
 
-    fun update(delta: Float, focusX: Float, focusY: Float){
+    fun update(delta: Float, focusX: Float, focusY: Float, mapWidth: Float, mapHeight: Float) {
         val safeMarginX = viewport.worldWidth * Constants.marginFraction
         val safeMarginY = viewport.worldHeight * Constants.marginFraction
 
@@ -39,6 +39,15 @@ class WorldCameraController (
         // Lerp the camera to the target
         camera.position.x += (targetPos.x - camera.position.x) * lerpSpeed * delta
         camera.position.y += (targetPos.y - camera.position.y) * lerpSpeed * delta
+
+        val halfWidth = viewport.worldWidth / 2f
+        val halfHeight = viewport.worldHeight / 2f
+
+        if (camera.position.x > halfWidth || camera.position.x < mapWidth - halfWidth)
+            camera.position.x = camera.position.x.coerceIn(halfWidth, mapWidth - halfWidth)
+        if (camera.position.y > halfHeight || camera.position.y < mapHeight - halfHeight)
+            camera.position.y = camera.position.y.coerceIn(halfHeight, mapHeight - halfHeight)
+
         camera.update()
     }
 }

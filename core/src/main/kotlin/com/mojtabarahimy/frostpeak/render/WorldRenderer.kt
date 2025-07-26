@@ -42,6 +42,7 @@ class WorldRenderer(private val clock: GameClock) {
     private val worldCameraController = WorldCameraController(worldCamera, worldViewport)
 
     private val gameMap = GameMap()
+    private var mapSize: Vector2
     private val collisionSystem = CollisionSystem()
     private val interactionSystem = InteractionSystem()
     private val particleSystem = FruitParticleSystem()
@@ -90,7 +91,7 @@ class WorldRenderer(private val clock: GameClock) {
 
         val mapName = "maps/main_house_outdoor_big.tmx"
 
-        gameMap.initMap(
+        mapSize = gameMap.initMap(
             mapName,
             beforePlayerLayers = arrayOf("ground", "trees", "houseBase"),
             afterPlayerLayers = arrayOf("abovePlayer"),
@@ -121,7 +122,7 @@ class WorldRenderer(private val clock: GameClock) {
                         player.getInteractionBounds(),
                         onNextMap =
                             { mapFilePath, beforePlayerLayers, afterPlayerLayers ->
-                                gameMap.loadNewMap(
+                                mapSize = gameMap.loadNewMap(
                                     mapFilePath,
                                     beforePlayerLayers,
                                     afterPlayerLayers,
@@ -181,7 +182,7 @@ class WorldRenderer(private val clock: GameClock) {
         playerInputProcessor.update(delta, Constants.speed)
         val interactionBounds = player.getInteractionBounds()
 
-        worldCameraController.update(delta, player.getCameraFocusX(), player.getCameraFocusY())
+        worldCameraController.update(delta, player.getCameraFocusX(), player.getCameraFocusY(), mapSize.x, mapSize.y)
 
         val interactableObject = interactionSystem.getNearbyInteraction(interactionBounds)
         particleSystem.update(delta)

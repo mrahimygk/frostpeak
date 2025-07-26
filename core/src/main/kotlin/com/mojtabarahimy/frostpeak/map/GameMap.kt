@@ -6,7 +6,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import com.badlogic.gdx.math.Rectangle
-import com.mojtabarahimy.frostpeak.music.MusicManager
+import com.badlogic.gdx.math.Vector2
 import com.mojtabarahimy.frostpeak.util.Constants
 
 class GameMap {
@@ -21,7 +21,7 @@ class GameMap {
         beforePlayerLayers: Array<String>,
         afterPlayerLayers: Array<String>,
         unitScale: Float = Constants.MAP_UNTI_SCALE
-    ) {
+    ) : Vector2 {
         map = TmxMapLoader().load(mapFilePath)
         renderer = OrthogonalTiledMapRenderer(map, unitScale)
         this.beforePlayerLayers = beforePlayerLayers
@@ -29,6 +29,19 @@ class GameMap {
 
         val musicPath = map.properties["music"] as? String
         //TODO: musicPath?.let { MusicManager.playMusic(it) }
+
+        return getMapSize()
+    }
+
+    private fun getMapSize(): Vector2 {
+        val mapWidth = map.properties.get("width", Int::class.java)
+        val mapHeight = map.properties.get("height", Int::class.java)
+        val tileWidth = map.properties.get("tilewidth", Int::class.java)
+        val tileHeight = map.properties.get("tileheight", Int::class.java)
+
+        val mapPixelWidth = mapWidth * tileWidth
+        val mapPixelHeight = mapHeight * tileHeight
+        return Vector2(mapPixelWidth.toFloat(), mapPixelHeight.toFloat())
     }
 
     fun getSpawnPoint(): Rectangle {
@@ -62,9 +75,9 @@ class GameMap {
         beforePlayerLayers: Array<String>,
         afterPlayerLayers: Array<String>,
         unitScale: Float = Constants.MAP_UNTI_SCALE
-    ) {
+    ) : Vector2 {
         dispose()
-        initMap(
+        return initMap(
             mapFilePath,
             beforePlayerLayers,
             afterPlayerLayers,
