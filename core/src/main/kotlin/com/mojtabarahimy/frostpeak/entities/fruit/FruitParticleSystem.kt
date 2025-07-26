@@ -21,6 +21,7 @@ class FruitParticleSystem {
         particles.removeIf { !it.isAlive }
         if (particles.isEmpty()) {
             onComplete?.invoke()
+            onComplete = null
         }
     }
 

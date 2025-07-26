@@ -53,4 +53,8 @@ class CollisionSystem {
     fun addCollisionBox(collisionBounds: Rectangle) {
         colliders.add(collisionBounds)
     }
+
+    fun removeCollisionBox(collisionBounds: Rectangle) {
+        colliders.remove(collisionBounds)
+    }
 }

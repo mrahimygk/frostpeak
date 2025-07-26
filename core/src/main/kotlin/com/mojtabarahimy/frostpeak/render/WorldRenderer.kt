@@ -90,6 +90,9 @@ class WorldRenderer(private val clock: GameClock) {
 
                 interactionSystem.addInteractable(item.itemId, box, {
                     player.itemInventory.addItem(Item(item.itemId, item.itemId, grapevine.fruitTexture))
+                    droppedItems.remove(item)
+                    collisionSystem.removeCollisionBox(box)
+                    interactionSystem.removeInteractable(box)
                 })
             }
         }
