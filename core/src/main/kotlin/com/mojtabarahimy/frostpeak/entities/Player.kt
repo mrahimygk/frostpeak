@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.mojtabarahimy.frostpeak.collision.CollisionSystem
+import com.mojtabarahimy.frostpeak.entities.items.ItemInventory
 import com.mojtabarahimy.frostpeak.entities.tools.ToolInventory
 import com.mojtabarahimy.frostpeak.entities.tools.ToolTarget
 import com.mojtabarahimy.frostpeak.util.Constants
@@ -67,6 +68,7 @@ class Player(
     private val collisionBounds = Rectangle()
 
     val toolInventory = ToolInventory()
+    val itemInventory = ItemInventory()
 
     fun update(delta: Float, dx: Float, dy: Float) {
         isMoving = dx != 0f || dy != 0f

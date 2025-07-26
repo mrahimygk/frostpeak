@@ -16,6 +16,7 @@ import com.mojtabarahimy.frostpeak.entities.Player
 import com.mojtabarahimy.frostpeak.entities.crops.Grapevine
 import com.mojtabarahimy.frostpeak.entities.fruit.FruitParticleSystem
 import com.mojtabarahimy.frostpeak.entities.fruit.harvest.DroppedItem
+import com.mojtabarahimy.frostpeak.entities.items.Item
 import com.mojtabarahimy.frostpeak.entities.tools.ToolTarget
 import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
 import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
@@ -33,7 +34,7 @@ class WorldRenderer(private val clock: GameClock) {
             worldCamera.setToOrtho(false, it.worldWidth, it.worldHeight)
         }
 
-    var player: Player
+    lateinit var player: Player
     private var playerInputProcessor: PlayerInputProcessor
 
     private var grapevine: Grapevine
@@ -78,14 +79,18 @@ class WorldRenderer(private val clock: GameClock) {
                 )
                 droppedItems.add(item)
 
-                collisionSystem.addCollisionBox(
-                    Rectangle(
-                        item.x,
-                        item.y,
-                        grapevine.fruitTexture.regionWidth.toFloat(),
-                        grapevine.fruitTexture.regionHeight.toFloat()
-                    )
+                val box = Rectangle(
+                    item.x,
+                    item.y,
+                    grapevine.fruitTexture.regionWidth.toFloat(),
+                    grapevine.fruitTexture.regionHeight.toFloat()
                 )
+
+                collisionSystem.addCollisionBox(box)
+
+                interactionSystem.addInteractable(item.itemId, box, {
+                    player.itemInventory.addItem(Item(item.itemId, item.itemId, grapevine.fruitTexture))
+                })
             }
         }
 
@@ -182,7 +187,13 @@ class WorldRenderer(private val clock: GameClock) {
         playerInputProcessor.update(delta, Constants.speed)
         val interactionBounds = player.getInteractionBounds()
 
-        worldCameraController.update(delta, player.getCameraFocusX(), player.getCameraFocusY(), mapSize.x, mapSize.y)
+        worldCameraController.update(
+            delta,
+            player.getCameraFocusX(),
+            player.getCameraFocusY(),
+            mapSize.x,
+            mapSize.y
+        )
 
         val interactableObject = interactionSystem.getNearbyInteraction(interactionBounds)
         particleSystem.update(delta)

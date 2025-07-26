@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.viewport.FitViewport
+import com.mojtabarahimy.frostpeak.entities.items.ItemInventory
 import com.mojtabarahimy.frostpeak.entities.tools.ToolInventory
 import com.mojtabarahimy.frostpeak.time.GameClock
 import com.mojtabarahimy.frostpeak.util.Constants
@@ -27,12 +28,13 @@ class HUDRenderer(
 
     private val projectionVector = Vector3()
 
-    fun render(inventory: ToolInventory, playerY: Float) {
+    fun render(inventory: ToolInventory, itemInventory: ItemInventory, playerY: Float) {
         uiCamera.update()
         batch.projectionMatrix = uiCamera.combined
         batch.begin()
         clock.draw(batch, font)
         drawInventory(inventory, playerY)
+        drawItemInventory(itemInventory, playerY)
         batch.end()
     }
 
@@ -62,6 +64,26 @@ class HUDRenderer(
             if (inventory.selectedTool?.name == tool.name) {
                 batch.draw(selectedInventorySlot, x - 7, y - 7)
             }
+        }
+    }
+
+    private fun drawItemInventory(inventory: ItemInventory, playerY: Float) {
+        val playerScreenY = uiCamera.project(projectionVector.set(0f, playerY, 0f)).y
+        val inventoryX = Constants.worldWidth /2f - inventory.texture.width - 32f
+        val inventoryY =
+            if (playerScreenY < Constants.worldHeight / 1.33f) Constants.worldHeight / 4f
+            else -Constants.worldHeight / 2f + 32f
+        batch.draw(inventory.texture, inventoryX, inventoryY)
+
+        inventory.getSlots().forEachIndexed { index, item ->
+            val x = inventoryX + 22f + index * 44f
+            val y = inventoryY + inventory.texture.height - 48f
+
+            batch.draw(item.item.icon, x, y)
+
+            /*if (inventory.selectedItem?.name == item.name) {
+                batch.draw(selectedInventorySlot, x - 7, y - 7)
+            }*/
         }
     }
 

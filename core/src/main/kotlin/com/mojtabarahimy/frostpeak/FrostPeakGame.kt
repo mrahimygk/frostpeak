@@ -30,7 +30,7 @@ class FrostPeakGame : ApplicationAdapter() {
         clock.update(delta)
 
         worldRenderer.render(delta)
-        hudRenderer.render(worldRenderer.player.toolInventory, worldRenderer.player.y)
+        hudRenderer.render(worldRenderer.player.toolInventory, worldRenderer.player.itemInventory, worldRenderer.player.y)
     }
 
     override fun resize(width: Int, height: Int) {
