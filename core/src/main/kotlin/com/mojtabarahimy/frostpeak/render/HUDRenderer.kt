@@ -10,9 +10,10 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mojtabarahimy.frostpeak.controller.dialog.DialogController
 import com.mojtabarahimy.frostpeak.controller.dialog.DialogLine
+import com.mojtabarahimy.frostpeak.data.PlayerData
+import com.mojtabarahimy.frostpeak.data.time.GameClock
 import com.mojtabarahimy.frostpeak.entities.items.ItemInventory
 import com.mojtabarahimy.frostpeak.entities.tools.ToolInventory
-import com.mojtabarahimy.frostpeak.time.GameClock
 import com.mojtabarahimy.frostpeak.util.Constants
 
 class HUDRenderer(
@@ -40,7 +41,8 @@ class HUDRenderer(
         delta: Float,
         inventory: ToolInventory,
         itemInventory: ItemInventory,
-        playerY: Float
+        playerY: Float,
+        playerData: PlayerData
     ) {
 
         uiCamera.update()
@@ -53,6 +55,7 @@ class HUDRenderer(
         clock.draw(batch, font)
         drawInventory(inventory, playerY)
         drawItemInventory(itemInventory, playerY)
+        drawMoney(playerData)
         dialogController.draw(batch, uiViewport.worldWidth, uiViewport.worldHeight)
         batch.end()
     }
@@ -105,6 +108,14 @@ class HUDRenderer(
                 batch.draw(selectedInventorySlot, x - 7, y - 7)
             }*/
         }
+    }
+
+    private fun drawMoney(playerData: PlayerData) {
+        val moneyText = "${playerData.money}G"
+        font.draw(
+            batch, moneyText, Constants.worldWidth / 3f,
+            Constants.worldHeight / 3f - 40f
+        )
     }
 
 }

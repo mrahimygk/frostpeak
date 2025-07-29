@@ -21,7 +21,7 @@ import com.mojtabarahimy.frostpeak.entities.tools.ToolTarget
 import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
 import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
 import com.mojtabarahimy.frostpeak.map.GameMap
-import com.mojtabarahimy.frostpeak.time.GameClock
+import com.mojtabarahimy.frostpeak.data.time.GameClock
 import com.mojtabarahimy.frostpeak.util.Constants
 
 class WorldRenderer(private val clock: GameClock) {

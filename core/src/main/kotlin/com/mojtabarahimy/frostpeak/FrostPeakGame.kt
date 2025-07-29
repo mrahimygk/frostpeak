@@ -3,10 +3,11 @@ package com.mojtabarahimy.frostpeak
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
+import com.mojtabarahimy.frostpeak.data.PlayerData
 import com.mojtabarahimy.frostpeak.music.MusicManager
 import com.mojtabarahimy.frostpeak.render.HUDRenderer
 import com.mojtabarahimy.frostpeak.render.WorldRenderer
-import com.mojtabarahimy.frostpeak.time.GameClock
+import com.mojtabarahimy.frostpeak.data.time.GameClock
 
 class FrostPeakGame : ApplicationAdapter() {
 
@@ -15,6 +16,9 @@ class FrostPeakGame : ApplicationAdapter() {
     private lateinit var hudRenderer: HUDRenderer
 
     private val clock = GameClock()
+    private val playerData: PlayerData = PlayerData().apply {
+        addMoney(500)
+    }
 
     override fun create() {
 
@@ -34,7 +38,8 @@ class FrostPeakGame : ApplicationAdapter() {
             delta,
             worldRenderer.player.toolInventory,
             worldRenderer.player.itemInventory,
-            worldRenderer.player.y
+            worldRenderer.player.y,
+            playerData
         )
     }
 

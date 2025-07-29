@@ -1,4 +1,4 @@
-package com.mojtabarahimy.frostpeak.time
+package com.mojtabarahimy.frostpeak.data.time
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
