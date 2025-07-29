@@ -8,7 +8,8 @@ import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.viewport.FitViewport
-import com.mojtabarahimy.frostpeak.controller.DialogController
+import com.mojtabarahimy.frostpeak.controller.dialog.DialogController
+import com.mojtabarahimy.frostpeak.controller.dialog.DialogLine
 import com.mojtabarahimy.frostpeak.entities.items.ItemInventory
 import com.mojtabarahimy.frostpeak.entities.tools.ToolInventory
 import com.mojtabarahimy.frostpeak.time.GameClock
@@ -56,7 +57,7 @@ class HUDRenderer(
         batch.end()
     }
 
-    fun startDialog(pages: List<String>) = dialogController.startDialog(pages)
+    fun startDialog(pages: List<DialogLine>) = dialogController.startDialog(pages)
 
     fun resize(width: Int, height: Int) {
         uiViewport.update(width, height)

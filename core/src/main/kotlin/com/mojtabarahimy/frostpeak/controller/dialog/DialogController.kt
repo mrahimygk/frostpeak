@@ -1,4 +1,4 @@
-package com.mojtabarahimy.frostpeak.controller
+package com.mojtabarahimy.frostpeak.controller.dialog
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
@@ -13,8 +13,8 @@ class DialogController(
     var isActive = false
         private set
 
-    private var dialogQueue = mutableListOf<String>()
-    private var currentPage = ""
+    private var dialogQueue = mutableListOf<DialogLine>()
+    private lateinit var currentPage: DialogLine
     private var displayedText = ""
     private var charIndex = 0
     private var timer = 0f
@@ -22,7 +22,7 @@ class DialogController(
     private var isTyping = false
     private var isSkipping = false
 
-    fun startDialog(pages: List<String>) {
+    fun startDialog(pages: List<DialogLine>) {
         dialogQueue.clear()
         dialogQueue.addAll(pages)
         isActive = true
@@ -34,13 +34,13 @@ class DialogController(
 
         timer += delta
         val speed = if (isSkipping) typingSpeed / 4f else typingSpeed
-        while (timer >= speed && charIndex < currentPage.length) {
+        while (timer >= speed && charIndex < currentPage.text.length) {
             timer -= speed
-            displayedText += currentPage[charIndex]
+            displayedText += currentPage.text[charIndex]
             charIndex++
         }
 
-        if (charIndex >= currentPage.length) {
+        if (charIndex >= currentPage.text.length) {
             isTyping = false
         }
     }
@@ -49,12 +49,15 @@ class DialogController(
         if (!isActive) return
 
         val frameHeight = 120f
-        val dialogY = -screenHeight/2f// + dialogBox.texture.height.toFloat()
-        val dialogX = -screenWidth/2f
+        val dialogY = -screenHeight / 2f// + dialogBox.texture.height.toFloat()
+        val dialogX = -screenWidth / 2f
         val padding = 20f
 
         dialogBox.draw(batch, dialogX, dialogY, screenWidth, frameHeight)
-        font.draw(batch, displayedText, dialogX+padding, dialogY + frameHeight - padding)
+        currentPage.portrait?.let {
+            batch.draw(it, dialogX, dialogY)
+        }
+        font.draw(batch, displayedText, dialogX + padding, dialogY + frameHeight - padding)
     }
 
     fun handleInput() {
@@ -63,8 +66,8 @@ class DialogController(
         when {
             Gdx.input.isKeyJustPressed(Input.Keys.N) -> {
                 if (isTyping) {
-                    displayedText = currentPage
-                    charIndex = currentPage.length
+                    displayedText = currentPage.text
+                    charIndex = currentPage.text.length
                     isTyping = false
                 } else {
                     nextPage()
