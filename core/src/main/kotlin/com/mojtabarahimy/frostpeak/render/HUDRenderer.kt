@@ -4,9 +4,11 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.viewport.FitViewport
+import com.mojtabarahimy.frostpeak.controller.DialogController
 import com.mojtabarahimy.frostpeak.entities.items.ItemInventory
 import com.mojtabarahimy.frostpeak.entities.tools.ToolInventory
 import com.mojtabarahimy.frostpeak.time.GameClock
@@ -28,16 +30,33 @@ class HUDRenderer(
 
     private val projectionVector = Vector3()
 
-    fun render(inventory: ToolInventory, itemInventory: ItemInventory, playerY: Float) {
+    val dialogFont = BitmapFont()
+    val dialogFrame = Texture("dialog/dialog_frame.png")
+    val ninePatch = NinePatch(dialogFrame, 14, 25, 12, 9)
+    val dialogController = DialogController(dialogFont, ninePatch)
+
+    fun render(
+        delta: Float,
+        inventory: ToolInventory,
+        itemInventory: ItemInventory,
+        playerY: Float
+    ) {
+
         uiCamera.update()
         batch.projectionMatrix = uiCamera.combined
+
+        dialogController.handleInput()
+        dialogController.update(delta)
+
         batch.begin()
         clock.draw(batch, font)
         drawInventory(inventory, playerY)
         drawItemInventory(itemInventory, playerY)
+        dialogController.draw(batch, uiViewport.worldWidth, uiViewport.worldHeight)
         batch.end()
     }
 
+    fun startDialog(pages: List<String>) = dialogController.startDialog(pages)
 
     fun resize(width: Int, height: Int) {
         uiViewport.update(width, height)
@@ -69,7 +88,7 @@ class HUDRenderer(
 
     private fun drawItemInventory(inventory: ItemInventory, playerY: Float) {
         val playerScreenY = uiCamera.project(projectionVector.set(0f, playerY, 0f)).y
-        val inventoryX = Constants.worldWidth /2f - inventory.texture.width - 32f
+        val inventoryX = Constants.worldWidth / 2f - inventory.texture.width - 32f
         val inventoryY =
             if (playerScreenY < Constants.worldHeight / 1.33f) Constants.worldHeight / 4f
             else -Constants.worldHeight / 2f + 32f

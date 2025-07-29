@@ -107,6 +107,10 @@ class InteractionSystem {
         interactables.add(InteractableObject(name, interactable, onInteract))
     }
 
+    fun removeInteractable(interactable: Rectangle) {
+        interactables.removeIf {  it.bounds == interactable }
+    }
+
     fun drawDebug(shapeRenderer: ShapeRenderer) {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line)
         shapeRenderer.color = Color.GREEN
