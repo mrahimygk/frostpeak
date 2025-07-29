@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="4" tileheight="4" infinite="0" nextlayerid="6" nextobjectid="11">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="4" tileheight="4" infinite="0" nextlayerid="7" nextobjectid="13">
  <properties>
   <property name="music" value="audio/main_house_indoor.mp3"/>
  </properties>
@@ -327,10 +327,21 @@
   <object id="9" x="276.25" y="117.75" width="92.75" height="127"/>
  </objectgroup>
  <objectgroup id="4" name="objects">
-  <object id="7" name="player_spawn" x="200" y="372">
-   <point/>
-  </object>
   <object id="8" name="exit_door" x="147" y="386" width="108.5" height="26"/>
   <object id="10" name="bed" x="276.667" y="129.333" width="16" height="91.3333"/>
+ </objectgroup>
+ <objectgroup id="6" name="SpawnPoints">
+  <object id="11" name="spawn_bed" x="236.667" y="172">
+   <properties>
+    <property name="facing" value="left"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="12" name="spawn_my_door" x="201.333" y="376">
+   <properties>
+    <property name="facing" value="up"/>
+   </properties>
+   <point/>
+  </object>
  </objectgroup>
 </map>

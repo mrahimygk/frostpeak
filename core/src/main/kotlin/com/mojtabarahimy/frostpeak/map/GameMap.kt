@@ -1,12 +1,12 @@
 package com.mojtabarahimy.frostpeak.map
 
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.maps.MapObject
+import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
-import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
+import com.mojtabarahimy.frostpeak.entities.Direction
 import com.mojtabarahimy.frostpeak.util.Constants
 
 class GameMap {
@@ -15,13 +15,14 @@ class GameMap {
     private lateinit var renderer: OrthogonalTiledMapRenderer
     private lateinit var beforePlayerLayers: Array<String>
     private lateinit var afterPlayerLayers: Array<String>
+    private val spawnPoints: MutableMap<String, SpawnPoint> = mutableMapOf()
 
     fun initMap(
         mapFilePath: String,
         beforePlayerLayers: Array<String>,
         afterPlayerLayers: Array<String>,
         unitScale: Float = Constants.MAP_UNTI_SCALE
-    ) : Vector2 {
+    ): Vector2 {
         map = TmxMapLoader().load(mapFilePath)
         renderer = OrthogonalTiledMapRenderer(map, unitScale)
         this.beforePlayerLayers = beforePlayerLayers
@@ -30,7 +31,28 @@ class GameMap {
         val musicPath = map.properties["music"] as? String
         //TODO: musicPath?.let { MusicManager.playMusic(it) }
 
+        fillPlayerSpawnPoints()
+
         return getMapSize()
+    }
+
+    private fun fillPlayerSpawnPoints() {
+        val spawnPoints = mutableMapOf<String, SpawnPoint>()
+
+        val objects = map.layers.get("SpawnPoints").objects
+        for (obj in objects) {
+            if (obj is RectangleMapObject) {
+                val name = obj.name ?: continue
+                val rect = obj.rectangle
+                val direction =
+                    Direction.valueOf(obj.properties.get("facing").toString().uppercase())
+                spawnPoints[name] = SpawnPoint(direction, Vector2(rect.x, rect.y))
+            }
+        }
+
+        this.spawnPoints.clear()
+        this.spawnPoints.putAll(spawnPoints)
+
     }
 
     private fun getMapSize(): Vector2 {
@@ -44,14 +66,8 @@ class GameMap {
         return Vector2(mapPixelWidth.toFloat(), mapPixelHeight.toFloat())
     }
 
-    fun getSpawnPoint(): Rectangle {
-
-        val objects = map.layers.get("objects").objects
-        val spawn: MapObject = objects.get("player_spawn")
-        val x: Float = spawn.properties["x"] as Float
-        val y: Float = spawn.properties["y"] as Float
-
-        return Rectangle(x, y, 1f, 1f)
+    fun getSpawnPoint(spawnPointName: String): SpawnPoint {
+        return spawnPoints[spawnPointName] ?: SpawnPoint(Direction.DOWN, Vector2(0f, 0f))
     }
 
 
@@ -75,7 +91,7 @@ class GameMap {
         beforePlayerLayers: Array<String>,
         afterPlayerLayers: Array<String>,
         unitScale: Float = Constants.MAP_UNTI_SCALE
-    ) : Vector2 {
+    ): Vector2 {
         dispose()
         return initMap(
             mapFilePath,

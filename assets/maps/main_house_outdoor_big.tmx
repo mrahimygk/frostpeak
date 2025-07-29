@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="194" height="149" tilewidth="4" tileheight="4" infinite="0" nextlayerid="11" nextobjectid="6">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="194" height="149" tilewidth="4" tileheight="4" infinite="0" nextlayerid="12" nextobjectid="8">
  <properties>
   <property name="music" value="audio/main_house_outdoor.mp3"/>
  </properties>
@@ -934,10 +934,21 @@
  </layer>
  <objectgroup id="6" name="objects">
   <object id="1" name="house_door" x="622.5" y="523.5" width="15" height="25"/>
-  <object id="2" name="player_spawn" x="724" y="573.5">
+  <object id="5" name="mullberry_tree_main" x="704.375" y="519.375" width="40.75" height="32.75"/>
+ </objectgroup>
+ <objectgroup id="11" name="SpawnPoints">
+  <object id="6" name="spawn_my_door" x="629" y="583.5">
+   <properties>
+    <property name="facing" value="down"/>
+   </properties>
    <point/>
   </object>
-  <object id="5" name="mullberry_tree_main" x="704.375" y="519.375" width="40.75" height="32.75"/>
+  <object id="7" name="spawn_path" x="485" y="577">
+   <properties>
+    <property name="facing" value="right"/>
+   </properties>
+   <point/>
+  </object>
  </objectgroup>
  <objectgroup id="7" name="collisions">
   <object id="3" x="704.5" y="520" width="40.75" height="32.75"/>

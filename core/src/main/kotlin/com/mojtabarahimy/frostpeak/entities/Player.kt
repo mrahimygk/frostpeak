@@ -21,8 +21,6 @@ class Player(
     private val collisionSystem: CollisionSystem
 ) {
 
-    enum class Direction { DOWN, UP, LEFT, RIGHT }
-
     private val frameCols = 4
     private val frameRows = 4
 
@@ -149,6 +147,10 @@ class Player(
     fun setPosition(x: Float, y: Float) {
         this.x = x
         this.y = y
+    }
+
+    fun setDirection(direction: Direction) {
+        currentDirection = direction
     }
 
     fun switchToolForward() {

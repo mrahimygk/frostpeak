@@ -89,7 +89,13 @@ class WorldRenderer(private val clock: GameClock) {
                 collisionSystem.addCollisionBox(box)
 
                 interactionSystem.addInteractable(item.itemId, box, {
-                    player.itemInventory.addItem(Item(item.itemId, item.itemId, grapevine.fruitTexture))
+                    player.itemInventory.addItem(
+                        Item(
+                            item.itemId,
+                            item.itemId,
+                            grapevine.fruitTexture
+                        )
+                    )
                     droppedItems.remove(item)
                     collisionSystem.removeCollisionBox(box)
                     interactionSystem.removeInteractable(box)
@@ -139,19 +145,19 @@ class WorldRenderer(private val clock: GameClock) {
 
                                 initSystems()
                                 checkAddGrapevineToSystems(mapFilePath)
-                                spawnPlayer()
+                                spawnPlayer("spawn_my_door")
                                 hasGrapevine = mapHasGrapevine()
                             },
 
                         onNextDay = {
                             clock.incrementDay()
-                            spawnPlayer()
+                            spawnPlayer("spawn_bed")
                         }
                     )
             })
 
         Gdx.input.inputProcessor = playerInputProcessor
-        spawnPlayer()
+        spawnPlayer("spawn_path")
 
         font = BitmapFont()
         font.color = Color.WHITE
@@ -242,9 +248,10 @@ class WorldRenderer(private val clock: GameClock) {
     }
 
 
-    private fun spawnPlayer() {
-        gameMap.getSpawnPoint().run {
-            player.setPosition(x, y)
+    private fun spawnPlayer(spawnPoint: String) {
+        gameMap.getSpawnPoint(spawnPoint).run {
+            player.setPosition(location.x, location.y)
+            player.setDirection(direction)
         }
     }
 
