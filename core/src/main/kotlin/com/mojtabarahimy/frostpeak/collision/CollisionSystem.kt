@@ -4,18 +4,21 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.MapLayer
+import com.badlogic.gdx.maps.objects.PolygonMapObject
 import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
+import com.badlogic.gdx.math.Intersector
+import com.badlogic.gdx.math.Polygon
 import com.badlogic.gdx.math.Rectangle
 import com.mojtabarahimy.frostpeak.util.Constants
 
 class CollisionSystem {
 
-    private val colliders = mutableListOf<Rectangle>()
+    private val colliders = mutableListOf<Collider>()
 
     fun initMap(map: TiledMap) {
-        val temp = mutableListOf<Rectangle>()
+        val temp = mutableListOf<Collider>()
 
         // Try to find any TiledMapTileLayer to grab tile size
         val sampleLayer = map.layers.firstOrNull { it is TiledMapTileLayer } as? TiledMapTileLayer
@@ -26,8 +29,13 @@ class CollisionSystem {
         val collisionLayer = map.layers.get("collisions") as MapLayer
 
         for (mapObject in collisionLayer.objects) {
-            if (mapObject is RectangleMapObject) {
-                temp.add(mapObject.rectangle)
+            when (mapObject) {
+                is RectangleMapObject -> temp.add(Collider.Box(mapObject.rectangle))
+                is PolygonMapObject -> {
+                    val polygon = mapObject.polygon
+                    val transformed = Polygon(polygon.transformedVertices)
+                    temp.add(Collider.Poly(transformed))
+                }
             }
         }
 
@@ -36,25 +44,57 @@ class CollisionSystem {
     }
 
     fun checkCollision(rect: Rectangle): Boolean {
-        return colliders.any { it.overlaps(rect) }
+        var collidesWithAny = false
+        for (collider in colliders) {
+            collidesWithAny = when (collider) {
+                is Collider.Box -> collider.rect.overlaps(rect)
+                is Collider.Poly -> Intersector.overlapConvexPolygons(
+                    rect.toPolygon(),
+                    collider.polygon
+                )
+            }
+            if (collidesWithAny) break
+        }
+
+        return collidesWithAny
+    }
+
+    fun Rectangle.toPolygon(): Polygon {
+        val rect: Rectangle = this
+        val vertices = floatArrayOf(
+            rect.x, rect.y,
+            rect.x + rect.width, rect.y,
+            rect.x + rect.width, rect.y + rect.height,
+            rect.x, rect.y + rect.height
+        )
+        return Polygon(vertices)
     }
 
     fun drawDebug(shapeRenderer: ShapeRenderer) {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line)
         shapeRenderer.color = Color.MAGENTA
 
-        for (rect in colliders){
-            shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height)
+        for (collider in colliders) {
+            when (collider) {
+                is Collider.Box -> shapeRenderer.rect(
+                    collider.rect.x,
+                    collider.rect.y,
+                    collider.rect.width,
+                    collider.rect.height
+                )
+
+                is Collider.Poly -> shapeRenderer.polygon(collider.polygon.transformedVertices)
+            }
         }
 
         shapeRenderer.end()
     }
 
     fun addCollisionBox(collisionBounds: Rectangle) {
-        colliders.add(collisionBounds)
+        colliders.add(Collider.Box(collisionBounds))
     }
 
     fun removeCollisionBox(collisionBounds: Rectangle) {
-        colliders.remove(collisionBounds)
+        colliders.removeAt(colliders.indexOfFirst { it is Collider.Box && it.rect == collisionBounds })
     }
 }

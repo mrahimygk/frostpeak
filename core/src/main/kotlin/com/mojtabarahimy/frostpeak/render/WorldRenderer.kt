@@ -244,10 +244,12 @@ class WorldRenderer(private val clock: GameClock) {
         )
         batch.end()
 
-        mapTransitionController.update(player.getInteractionBounds()) { spawnPointName, targetMap ->
+        val newMapSize = mapTransitionController.update(player.getInteractionBounds()) { spawnPointName, targetMap ->
             spawnPlayer(spawnPointName)
             initializeMap(targetMap)
         }
+
+        newMapSize?.let { mapSize = it }
 
         shapeRenderer.projectionMatrix = worldCamera.combined
         collisionSystem.drawDebug(shapeRenderer)

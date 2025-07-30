@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.math.Vector2
 import com.mojtabarahimy.frostpeak.map.GameMap
 
 class MapTransitionController(private val gameMap: GameMap) {
@@ -11,14 +12,14 @@ class MapTransitionController(private val gameMap: GameMap) {
     fun update(
         playerBounds: Rectangle,
         onLoadedNewMap: ((spawnPointName: String, targetMap: String) -> Unit)? = null
-    ) {
+    ) : Vector2? {
         val exit = checkExitCollision(playerBounds)
 
         if (exit != null) {
             val targetMap = exit.properties["targetMap"] as? String
             val targetSpawn = exit.properties["targetSpawn"] as? String
             if (targetMap != null && targetSpawn != null) {
-                gameMap.loadNewMap(
+                return gameMap.loadNewMap(
                     "maps/$targetMap",
                     arrayOf("ground"),
                     arrayOf("abovePlayer"),
@@ -27,6 +28,8 @@ class MapTransitionController(private val gameMap: GameMap) {
                 )
             }
         }
+
+        return null
     }
 
     private fun checkExitCollision(playerBounds: Rectangle): RectangleMapObject? {

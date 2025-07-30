@@ -108,7 +108,7 @@ class InteractionSystem {
     }
 
     fun removeInteractable(interactable: Rectangle) {
-        interactables.removeIf {  it.bounds == interactable }
+        interactables.removeAt(interactables.indexOfFirst { it.bounds == interactable })
     }
 
     fun drawDebug(shapeRenderer: ShapeRenderer) {
