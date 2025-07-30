@@ -1,6 +1,7 @@
 package com.mojtabarahimy.frostpeak.map
 
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.maps.MapLayer
 import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
@@ -21,7 +22,9 @@ class GameMap {
         mapFilePath: String,
         beforePlayerLayers: Array<String>,
         afterPlayerLayers: Array<String>,
-        unitScale: Float = Constants.MAP_UNTI_SCALE
+        unitScale: Float = Constants.MAP_UNTI_SCALE,
+        spawnPointName: String,
+        onLoadedNewMap: ((spawnPointName: String, targetMap: String) -> Unit)? = null
     ): Vector2 {
         map = TmxMapLoader().load(mapFilePath)
         renderer = OrthogonalTiledMapRenderer(map, unitScale)
@@ -33,6 +36,7 @@ class GameMap {
 
         fillPlayerSpawnPoints()
 
+        onLoadedNewMap?.invoke(spawnPointName, mapFilePath)
         return getMapSize()
     }
 
@@ -70,6 +74,10 @@ class GameMap {
         return spawnPoints[spawnPointName] ?: SpawnPoint(Direction.DOWN, Vector2(0f, 0f))
     }
 
+    fun getExitLayer(): MapLayer? {
+        val exitsLayer = map.layers.get("exits")
+        return exitsLayer
+    }
 
     fun renderMapBeforePlayer(camera: OrthographicCamera) {
         renderer.setView(camera)
@@ -90,7 +98,9 @@ class GameMap {
         mapFilePath: String,
         beforePlayerLayers: Array<String>,
         afterPlayerLayers: Array<String>,
-        unitScale: Float = Constants.MAP_UNTI_SCALE
+        unitScale: Float = Constants.MAP_UNTI_SCALE,
+        spawnPointName: String,
+        onLoadedNewMap: ((spawnPointName: String, targetMap: String) -> Unit)? = null
     ): Vector2 {
         dispose()
         return initMap(
@@ -98,8 +108,9 @@ class GameMap {
             beforePlayerLayers,
             afterPlayerLayers,
             unitScale,
+            spawnPointName,
+            onLoadedNewMap
         )
-
     }
 }
 

@@ -11,7 +11,9 @@ import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mojtabarahimy.frostpeak.collision.CollisionSystem
+import com.mojtabarahimy.frostpeak.controller.MapTransitionController
 import com.mojtabarahimy.frostpeak.controller.WorldCameraController
+import com.mojtabarahimy.frostpeak.data.time.GameClock
 import com.mojtabarahimy.frostpeak.entities.Player
 import com.mojtabarahimy.frostpeak.entities.crops.Grapevine
 import com.mojtabarahimy.frostpeak.entities.fruit.FruitParticleSystem
@@ -21,7 +23,6 @@ import com.mojtabarahimy.frostpeak.entities.tools.ToolTarget
 import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
 import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
 import com.mojtabarahimy.frostpeak.map.GameMap
-import com.mojtabarahimy.frostpeak.data.time.GameClock
 import com.mojtabarahimy.frostpeak.util.Constants
 
 class WorldRenderer(private val clock: GameClock) {
@@ -53,6 +54,8 @@ class WorldRenderer(private val clock: GameClock) {
     private var font: BitmapFont
 
     private val droppedItems = mutableListOf<DroppedItem>()
+
+    private val mapTransitionController: MapTransitionController
 
     init {
 
@@ -109,9 +112,10 @@ class WorldRenderer(private val clock: GameClock) {
             mapName,
             beforePlayerLayers = arrayOf("ground", "trees", "houseBase"),
             afterPlayerLayers = arrayOf("abovePlayer"),
+            spawnPointName = "spawn_path",
         )
-        initSystems()
-        checkAddGrapevineToSystems(mapName)
+
+        initializeMap(mapName)
 
         player = Player(texture, walkSound, collisionSystem)
 
@@ -140,13 +144,12 @@ class WorldRenderer(private val clock: GameClock) {
                                     mapFilePath,
                                     beforePlayerLayers,
                                     afterPlayerLayers,
+                                    spawnPointName = "spawn_my_door",
+                                    onLoadedNewMap = { spawnPointName, targetMap ->
+                                        spawnPlayer(spawnPointName)
+                                        initializeMap(targetMap)
+                                    }
                                 )
-
-
-                                initSystems()
-                                checkAddGrapevineToSystems(mapFilePath)
-                                spawnPlayer("spawn_my_door")
-                                hasGrapevine = mapHasGrapevine()
                             },
 
                         onNextDay = {
@@ -162,11 +165,17 @@ class WorldRenderer(private val clock: GameClock) {
         font = BitmapFont()
         font.color = Color.WHITE
 
-        hasGrapevine = mapHasGrapevine()
-
         clock.onNextDay = { _: Int, dayInYear: Int ->
             grapevine.checkGrowth(dayInYear)
         }
+
+        mapTransitionController = MapTransitionController(gameMap)
+    }
+
+    private fun initializeMap(mapName: String) {
+        initSystems()
+        checkAddGrapevineToSystems(mapName)
+        hasGrapevine = mapHasGrapevine()
     }
 
     private fun getWorldTargets(): List<ToolTarget> {
@@ -235,11 +244,16 @@ class WorldRenderer(private val clock: GameClock) {
         )
         batch.end()
 
+        mapTransitionController.update(player.getInteractionBounds()) { spawnPointName, targetMap ->
+            spawnPlayer(spawnPointName)
+            initializeMap(targetMap)
+        }
 
         shapeRenderer.projectionMatrix = worldCamera.combined
         collisionSystem.drawDebug(shapeRenderer)
         interactionSystem.drawDebug(shapeRenderer)
         player.drawDebug(shapeRenderer)
+        mapTransitionController.drawDebug(shapeRenderer)
     }
 
     private fun initSystems() {
