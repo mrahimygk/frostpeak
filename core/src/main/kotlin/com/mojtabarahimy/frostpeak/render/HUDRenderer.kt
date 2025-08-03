@@ -99,10 +99,14 @@ class HUDRenderer(
         batch.draw(inventory.texture, inventoryX, inventoryY)
 
         inventory.getSlots().forEachIndexed { index, item ->
-            val x = inventoryX + 22f + index * 44f
-            val y = inventoryY + inventory.texture.height - 48f
+            val x = inventoryX + 12 + item.item.icon.regionWidth + index * 44f
+            val y = inventoryY + inventory.texture.height / 2f - item.item.icon.regionHeight / 3f
 
             batch.draw(item.item.icon, x, y)
+
+            if (item.quantity > 1) {
+                font.draw(batch, "${item.quantity}", x + 14f, y + 4f)
+            }
 
             /*if (inventory.selectedItem?.name == item.name) {
                 batch.draw(selectedInventorySlot, x - 7, y - 7)

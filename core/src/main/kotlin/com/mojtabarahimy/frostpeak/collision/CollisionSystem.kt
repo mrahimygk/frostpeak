@@ -95,6 +95,8 @@ class CollisionSystem {
     }
 
     fun removeCollisionBox(collisionBounds: Rectangle) {
-        colliders.removeAt(colliders.indexOfFirst { it is Collider.Box && it.rect == collisionBounds })
+        colliders.indexOfFirst { it is Collider.Box && it.rect == collisionBounds }.let {
+            if (it >= 0) colliders.removeAt(it)
+        }
     }
 }
