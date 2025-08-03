@@ -19,13 +19,6 @@ class CollisionSystem {
 
     fun initMap(map: TiledMap) {
         val temp = mutableListOf<Collider>()
-
-        // Try to find any TiledMapTileLayer to grab tile size
-        val sampleLayer = map.layers.firstOrNull { it is TiledMapTileLayer } as? TiledMapTileLayer
-        val tileWidth = sampleLayer?.tileWidth?.toFloat() ?: Constants.TILED_MAP_DEFAULT_TILE_SIZE
-        val tileHeight = sampleLayer?.tileHeight?.toFloat() ?: Constants.TILED_MAP_DEFAULT_TILE_SIZE
-
-        Gdx.app.log("Frostpeak", "CollisionSystem: tileWidth:$tileWidth, tileHeight:$tileHeight")
         val collisionLayer = map.layers.get("collisions") as MapLayer
 
         for (mapObject in collisionLayer.objects) {
