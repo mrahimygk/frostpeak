@@ -12,6 +12,7 @@ class ToolInventory {
         tools.add(Axe())
         tools.add(Knife())
         tools.add(Shovel())
+        tools.add(Pickax())
     }
 
     val selectedTool: Tool?
