@@ -23,11 +23,11 @@ class CollisionSystem {
 
         for (mapObject in collisionLayer.objects) {
             when (mapObject) {
-                is RectangleMapObject -> temp.add(Collider.Box(mapObject.rectangle))
+                is RectangleMapObject -> temp.add(Collider.Box(mapObject.name, mapObject.rectangle))
                 is PolygonMapObject -> {
                     val polygon = mapObject.polygon
                     val transformed = Polygon(polygon.transformedVertices)
-                    temp.add(Collider.Poly(transformed))
+                    temp.add(Collider.Poly(mapObject.name, transformed))
                 }
             }
         }
@@ -52,7 +52,7 @@ class CollisionSystem {
         return collidesWithAny
     }
 
-    fun Rectangle.toPolygon(): Polygon {
+    private fun Rectangle.toPolygon(): Polygon {
         val rect: Rectangle = this
         val vertices = floatArrayOf(
             rect.x, rect.y,
@@ -83,8 +83,8 @@ class CollisionSystem {
         shapeRenderer.end()
     }
 
-    fun addCollisionBox(collisionBounds: Rectangle) {
-        colliders.add(Collider.Box(collisionBounds))
+    fun addCollisionBox(name: String, collisionBounds: Rectangle) {
+        colliders.add(Collider.Box(name, collisionBounds))
     }
 
     fun removeCollisionBox(collisionBounds: Rectangle) {

@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.Polygon
 import com.badlogic.gdx.math.Rectangle
 
 sealed class Collider {
-    data class Box(val rect: Rectangle) : Collider()
-    data class Poly(val polygon: Polygon) : Collider()
+    abstract val name: String?
+
+    data class Box(override val name: String?, val rect: Rectangle) : Collider()
+    data class Poly(override val name: String?, val polygon: Polygon) : Collider()
 }

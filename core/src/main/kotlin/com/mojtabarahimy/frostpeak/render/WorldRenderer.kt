@@ -89,7 +89,7 @@ class WorldRenderer(private val clock: GameClock) {
                     grapevine.fruitTexture.regionHeight.toFloat()
                 )
 
-                collisionSystem.addCollisionBox(box)
+                collisionSystem.addCollisionBox(item.itemId, box)
 
                 interactionSystem.addInteractable(item.itemId, box, {
                     player.itemInventory.addItem(
@@ -185,7 +185,7 @@ class WorldRenderer(private val clock: GameClock) {
 
     private fun checkAddGrapevineToSystems(mapFilePath: String) {
         if (mapFilePath.contains("maps/main_house_outdoor_big.tmx")) {
-            collisionSystem.addCollisionBox(grapevine.getCollisionBounds())
+            collisionSystem.addCollisionBox("grapevine", grapevine.getCollisionBounds())
 
             interactionSystem.addInteractable(
                 "grapevine",
