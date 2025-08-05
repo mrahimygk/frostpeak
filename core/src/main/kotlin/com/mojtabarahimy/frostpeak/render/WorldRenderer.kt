@@ -91,7 +91,7 @@ class WorldRenderer(private val clock: GameClock) {
 
                 collisionSystem.addCollisionBox(item.itemId, box)
 
-                interactionSystem.addInteractable(item.itemId, box, {
+                interactionSystem.addInteractable(item.itemId,item.itemId, box, {
                     player.itemInventory.addItem(
                         Item(
                             item.itemId,
@@ -188,6 +188,7 @@ class WorldRenderer(private val clock: GameClock) {
             collisionSystem.addCollisionBox("grapevine", grapevine.getCollisionBounds())
 
             interactionSystem.addInteractable(
+                "grapevine",
                 "grapevine",
                 grapevine.getCollisionBounds()
             ) {

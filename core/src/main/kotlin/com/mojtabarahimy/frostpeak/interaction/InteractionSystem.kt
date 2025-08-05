@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Rectangle
 
 data class InteractableObject(
     val name: String,
+    val type: String?,
     val bounds: Rectangle,
     val onInteract: (() -> Unit)? = null
 )
@@ -28,7 +29,11 @@ class InteractionSystem {
         for (mapObject in objectLayer.objects) {
             if (mapObject is RectangleMapObject) {
                 temp.add(
-                    InteractableObject(mapObject.name, mapObject.rectangle)
+                    InteractableObject(
+                        mapObject.name,
+                        mapObject.properties.get("type") as? String,
+                        mapObject.rectangle
+                    )
                 )
             }
 
@@ -103,8 +108,13 @@ class InteractionSystem {
         }
     }
 
-    fun addInteractable(name: String, interactable: Rectangle, onInteract: (() -> Unit)) {
-        interactables.add(InteractableObject(name, interactable, onInteract))
+    fun addInteractable(
+        name: String,
+        type: String,
+        interactable: Rectangle,
+        onInteract: (() -> Unit)
+    ) {
+        interactables.add(InteractableObject(name, type, interactable, onInteract))
     }
 
     fun removeInteractable(interactable: Rectangle) {

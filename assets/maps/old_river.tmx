@@ -785,7 +785,7 @@
 </data>
  </layer>
  <objectgroup id="3" name="objects">
-  <object id="79" name="stone_1" x="39.2273" y="770.625" width="108.835" height="84.5625"/>
+  <object id="79" name="stone_1" type="Stone" x="39.2273" y="770.625" width="108.835" height="84.5625"/>
  </objectgroup>
  <objectgroup id="4" name="collisions">
   <object id="3" x="-89.3333" y="-20" width="93.33" height="1044"/>
