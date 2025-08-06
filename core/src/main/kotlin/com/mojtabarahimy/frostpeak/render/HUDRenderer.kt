@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mojtabarahimy.frostpeak.controller.dialog.DialogController
@@ -17,7 +18,8 @@ import com.mojtabarahimy.frostpeak.entities.tools.ToolInventory
 import com.mojtabarahimy.frostpeak.util.Constants
 
 class HUDRenderer(
-    private val clock: GameClock
+    private val clock: GameClock,
+    private val playerData: PlayerData
 ) {
     private val uiCamera = OrthographicCamera()
     private val uiViewport: FitViewport =
@@ -37,6 +39,8 @@ class HUDRenderer(
     val ninePatch = NinePatch(dialogFrame, 14, 25, 12, 9)
     val dialogController = DialogController(dialogFont, ninePatch)
 
+    private val shapeRenderer = ShapeRenderer()
+
     fun render(
         delta: Float,
         inventory: ToolInventory,
@@ -47,6 +51,7 @@ class HUDRenderer(
 
         uiCamera.update()
         batch.projectionMatrix = uiCamera.combined
+        shapeRenderer.projectionMatrix = uiCamera.combined
 
         dialogController.handleInput()
         dialogController.update(delta)
@@ -58,6 +63,25 @@ class HUDRenderer(
         drawMoney(playerData)
         dialogController.draw(batch, uiViewport.worldWidth, uiViewport.worldHeight)
         batch.end()
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+        renderEnergyBar(batch, playerData)
+        shapeRenderer.end()
+    }
+
+    fun renderEnergyBar(batch: SpriteBatch, playerData: PlayerData) {
+        val x = Constants.worldWidth / 3f
+        val y = Constants.worldHeight / 3f + 10f
+        val width = 100f
+        val height = 10f
+
+        val energyRatio = playerData.energy / playerData.maxEnergy
+
+        shapeRenderer.color = Color.DARK_GRAY
+        shapeRenderer.rect(x, y, width, height)
+
+        shapeRenderer.color = Color.GREEN
+        shapeRenderer.rect(x, y, width * energyRatio, height)
     }
 
     fun startDialog(pages: List<DialogLine>) = dialogController.startDialog(pages)

@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mojtabarahimy.frostpeak.collision.CollisionSystem
 import com.mojtabarahimy.frostpeak.controller.MapTransitionController
 import com.mojtabarahimy.frostpeak.controller.WorldCameraController
+import com.mojtabarahimy.frostpeak.data.PlayerData
 import com.mojtabarahimy.frostpeak.data.time.GameClock
 import com.mojtabarahimy.frostpeak.entities.Player
 import com.mojtabarahimy.frostpeak.entities.crops.Grapevine
@@ -27,7 +28,7 @@ import com.mojtabarahimy.frostpeak.map.GameMap
 import com.mojtabarahimy.frostpeak.render.anim.BreakableStone
 import com.mojtabarahimy.frostpeak.util.Constants
 
-class WorldRenderer(private val clock: GameClock) {
+class WorldRenderer(private val clock: GameClock, private val playerData: PlayerData) {
 
     private val batch = SpriteBatch()
     private val worldCamera = OrthographicCamera()
@@ -166,6 +167,7 @@ class WorldRenderer(private val clock: GameClock) {
             },
             onUsingTool = {
                 val target = player.useTool(getWorldTargets())
+                playerData.useEnergy(5f)
                 if (target is InteractableObject.StoneInteractable) {
                     target.onInteract = {
                         interactionSystem.removeInteractable(target.bounds)

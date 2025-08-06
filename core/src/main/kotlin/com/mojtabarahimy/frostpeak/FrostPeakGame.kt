@@ -16,14 +16,14 @@ class FrostPeakGame : ApplicationAdapter() {
     private lateinit var hudRenderer: HUDRenderer
 
     private val clock = GameClock()
-    private val playerData: PlayerData = PlayerData().apply {
+    private val playerData: PlayerData = PlayerData(/*TODO: saved energy and money*/).apply {
         addMoney(500)
     }
 
     override fun create() {
 
-        worldRenderer = WorldRenderer(clock)
-        hudRenderer = HUDRenderer(clock)
+        worldRenderer = WorldRenderer(clock, playerData)
+        hudRenderer = HUDRenderer(clock, playerData)
     }
 
     override fun render() {
