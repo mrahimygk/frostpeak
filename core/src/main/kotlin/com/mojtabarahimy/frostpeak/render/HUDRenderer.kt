@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector3
@@ -19,7 +18,8 @@ import com.mojtabarahimy.frostpeak.util.Constants
 
 class HUDRenderer(
     private val clock: GameClock,
-    private val playerData: PlayerData
+    private val playerData: PlayerData,
+    private val dialogController: DialogController
 ) {
     private val uiCamera = OrthographicCamera()
     private val uiViewport: FitViewport =
@@ -33,11 +33,6 @@ class HUDRenderer(
     }
 
     private val projectionVector = Vector3()
-
-    val dialogFont = BitmapFont()
-    val dialogFrame = Texture("dialog/dialog_frame.png")
-    val ninePatch = NinePatch(dialogFrame, 14, 25, 12, 9)
-    val dialogController = DialogController(dialogFont, ninePatch)
 
     private val shapeRenderer = ShapeRenderer()
 

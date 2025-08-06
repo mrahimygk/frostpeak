@@ -13,6 +13,9 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mojtabarahimy.frostpeak.collision.CollisionSystem
 import com.mojtabarahimy.frostpeak.controller.MapTransitionController
 import com.mojtabarahimy.frostpeak.controller.WorldCameraController
+import com.mojtabarahimy.frostpeak.controller.dialog.DialogController
+import com.mojtabarahimy.frostpeak.controller.dialog.DialogLine
+import com.mojtabarahimy.frostpeak.controller.npc.NpcController
 import com.mojtabarahimy.frostpeak.data.PlayerData
 import com.mojtabarahimy.frostpeak.data.time.GameClock
 import com.mojtabarahimy.frostpeak.entities.Player
@@ -23,12 +26,17 @@ import com.mojtabarahimy.frostpeak.entities.items.Item
 import com.mojtabarahimy.frostpeak.entities.tools.ToolTarget
 import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
 import com.mojtabarahimy.frostpeak.interaction.InteractableObject
+import com.mojtabarahimy.frostpeak.interaction.InteractableType
 import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
 import com.mojtabarahimy.frostpeak.map.GameMap
 import com.mojtabarahimy.frostpeak.render.anim.BreakableStone
 import com.mojtabarahimy.frostpeak.util.Constants
 
-class WorldRenderer(private val clock: GameClock, private val playerData: PlayerData) {
+class WorldRenderer(
+    private val clock: GameClock,
+    private val playerData: PlayerData,
+    private val dialogController: DialogController
+) {
 
     private val batch = SpriteBatch()
     private val worldCamera = OrthographicCamera()
@@ -49,6 +57,7 @@ class WorldRenderer(private val clock: GameClock, private val playerData: Player
     private val gameMap = GameMap()
     private var mapSize: Vector2
     private val collisionSystem = CollisionSystem()
+    private val npcController = NpcController(collisionSystem)
     private val interactionSystem = InteractionSystem()
     private val stonesList = mutableListOf<BreakableStone>()
     private val particleSystem = FruitParticleSystem()
@@ -95,7 +104,7 @@ class WorldRenderer(private val clock: GameClock, private val playerData: Player
 
                 collisionSystem.addCollisionBox(item.itemId, box)
 
-                interactionSystem.addInteractable(item.itemId, item.itemId, box, {
+                interactionSystem.addInteractable(item.itemId, InteractableType.DroppedItem, box, {
                     player.itemInventory.addItem(
                         Item(
                             item.itemId,
@@ -188,6 +197,18 @@ class WorldRenderer(private val clock: GameClock, private val playerData: Player
             grapevine.checkGrowth(dayInYear)
         }
 
+        npcController.onInteract = { person ->
+            //TODO: get dialog from dialog manager
+            println("interacting with $person")
+            val dialog = listOf(
+                DialogLine("Hello there!"),
+                DialogLine("The crops are growing well this season."),
+                    DialogLine("See you around!")
+            )
+
+            dialogController.startDialog(dialog)
+        }
+
         mapTransitionController = MapTransitionController(gameMap)
     }
 
@@ -212,7 +233,7 @@ class WorldRenderer(private val clock: GameClock, private val playerData: Player
 
             interactionSystem.addInteractable(
                 "grapevine",
-                "grapevine",
+                InteractableType.Tree,
                 grapevine.getCollisionBounds()
             ) {
                 grapevine.onInteract()
@@ -240,6 +261,7 @@ class WorldRenderer(private val clock: GameClock, private val playerData: Player
         val interactableObject = interactionSystem.getNearbyInteraction(interactionBounds)
         particleSystem.update(delta)
         stonesList.forEach { it.update(delta) }
+        npcController.update(delta)
 
         gameMap.renderMapBeforePlayer(worldCamera)
 
@@ -251,6 +273,7 @@ class WorldRenderer(private val clock: GameClock, private val playerData: Player
         particleSystem.drawBehindPlayer(batch, player.y)
         droppedItems.forEach { it.render(batch) }
         stonesList.forEach { it.render(batch) }
+        npcController.render(batch)
         player.draw(batch)
         batch.end()
 
@@ -288,6 +311,9 @@ class WorldRenderer(private val clock: GameClock, private val playerData: Player
     private fun initSystems() {
         collisionSystem.initMap(gameMap.map)
         interactionSystem.initMap(gameMap.map)
+        npcController.initMap(gameMap.map)
+        npcController.initCollision(collisionSystem)
+        npcController.initInteraction(interactionSystem)
     }
 
 

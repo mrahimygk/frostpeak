@@ -24,7 +24,7 @@ class InteractionSystem {
             if (mapObject is RectangleMapObject) {
                 val obj = InteractableObject.BasicInteractable(
                     mapObject.name,
-                    mapObject.properties.get("type") as? String,
+                    mapObject.properties.get("type")?.let { InteractableType.valueOf(it as String) },
                     mapObject.rectangle
                 )
 
@@ -104,8 +104,9 @@ class InteractionSystem {
     ) {
         stateTime += delta
         interactableObject?.run {
-            val hint = when (interactableObject) {
-                is InteractableObject.StoneInteractable -> "Press Z to use tool"
+            val hint = when (interactableObject.type) {
+                InteractableType.Stone -> "Press Z to use tool"
+                InteractableType.Npc -> "Press E to talk"
                 else -> "Press E"
             }
             val layout = GlyphLayout(font, hint)
@@ -119,7 +120,7 @@ class InteractionSystem {
 
     fun addInteractable(
         name: String,
-        type: String,
+        type: InteractableType,
         interactable: Rectangle,
         onInteract: (() -> Unit)
     ) {

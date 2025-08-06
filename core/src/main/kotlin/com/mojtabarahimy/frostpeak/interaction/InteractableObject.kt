@@ -7,20 +7,20 @@ import com.mojtabarahimy.frostpeak.entities.tools.ToolTarget
 
 sealed class InteractableObject {
     abstract val name: String
-    abstract val type: String?
+    abstract val type: InteractableType?
     abstract val bounds: Rectangle
     abstract var onInteract: (() -> Unit)?
 
     data class BasicInteractable(
         override val name: String,
-        override val type: String?,
+        override val type: InteractableType?,
         override val bounds: Rectangle,
         override var onInteract: (() -> Unit)? = null
     ) : InteractableObject()
 
     data class StoneInteractable(
         override val name: String,
-        override val type: String?,
+        override val type: InteractableType?,
         override val bounds: Rectangle,
         val maxHp: Int,
         override var onInteract: (() -> Unit)? = null

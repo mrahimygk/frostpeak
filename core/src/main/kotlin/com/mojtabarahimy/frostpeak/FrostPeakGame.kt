@@ -3,6 +3,10 @@ package com.mojtabarahimy.frostpeak
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.NinePatch
+import com.mojtabarahimy.frostpeak.controller.dialog.DialogController
 import com.mojtabarahimy.frostpeak.data.PlayerData
 import com.mojtabarahimy.frostpeak.music.MusicManager
 import com.mojtabarahimy.frostpeak.render.HUDRenderer
@@ -22,8 +26,14 @@ class FrostPeakGame : ApplicationAdapter() {
 
     override fun create() {
 
-        worldRenderer = WorldRenderer(clock, playerData)
-        hudRenderer = HUDRenderer(clock, playerData)
+
+        val dialogFont = BitmapFont()
+        val dialogFrame = Texture("dialog/dialog_frame.png")
+        val ninePatch = NinePatch(dialogFrame, 14, 25, 12, 9)
+        val dialogController = DialogController(dialogFont, ninePatch)
+
+        worldRenderer = WorldRenderer(clock, playerData, dialogController)
+        hudRenderer = HUDRenderer(clock, playerData, dialogController)
     }
 
     override fun render() {
