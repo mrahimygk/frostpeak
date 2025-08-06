@@ -2,7 +2,7 @@ package com.mojtabarahimy.frostpeak.entities.tools
 
 import com.badlogic.gdx.graphics.Texture
 
-class Pickax : Tool {
+class Pickax : Tool, XpGainer by XpGainerImpl() {
     override val name = "Pickax"
 
     override val texture: Texture

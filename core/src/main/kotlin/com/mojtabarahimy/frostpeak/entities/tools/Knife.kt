@@ -2,7 +2,7 @@ package com.mojtabarahimy.frostpeak.entities.tools
 
 import com.badlogic.gdx.graphics.Texture
 
-class Knife : Tool {
+class Knife : Tool , XpGainer by XpGainerImpl() {
     override val name = "Knife"
 
     override val texture: Texture

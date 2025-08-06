@@ -2,7 +2,7 @@ package com.mojtabarahimy.frostpeak.entities.tools
 
 import com.badlogic.gdx.graphics.Texture
 
-class Shovel : Tool {
+class Shovel : Tool, XpGainer by XpGainerImpl() {
     override val name = "Shovel"
 
     override val texture: Texture

@@ -35,6 +35,7 @@ sealed class InteractableObject {
         override fun onToolUsed(tool: Tool) {
             println("${tool.name} used on ${name}")
             if (tool is Pickax) {
+                tool.gainXP()
                 if (damage(1)) onInteract?.invoke()
             }
         }
