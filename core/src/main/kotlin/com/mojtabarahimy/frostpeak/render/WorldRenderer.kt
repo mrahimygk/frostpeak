@@ -24,6 +24,7 @@ import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
 import com.mojtabarahimy.frostpeak.interaction.InteractableObject
 import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
 import com.mojtabarahimy.frostpeak.map.GameMap
+import com.mojtabarahimy.frostpeak.render.anim.BreakableStone
 import com.mojtabarahimy.frostpeak.util.Constants
 
 class WorldRenderer(private val clock: GameClock) {
@@ -48,6 +49,7 @@ class WorldRenderer(private val clock: GameClock) {
     private var mapSize: Vector2
     private val collisionSystem = CollisionSystem()
     private val interactionSystem = InteractionSystem()
+    private val stonesList = mutableListOf<BreakableStone>()
     private val particleSystem = FruitParticleSystem()
 
     private val shapeRenderer = ShapeRenderer()
@@ -120,7 +122,6 @@ class WorldRenderer(private val clock: GameClock) {
 
         player = Player(texture, walkSound, collisionSystem)
 
-
         worldCamera.position.set(
             player.x + player.texture.width / 2f,
             player.y + player.texture.height / 2f,
@@ -128,6 +129,11 @@ class WorldRenderer(private val clock: GameClock) {
         )
         worldCamera.update()
 
+        getWorldTargets().forEach {
+            if(it is InteractableObject.StoneInteractable){
+                stonesList.add(BreakableStone(it.name, it.bounds))
+            }
+        }
 
         playerInputProcessor = PlayerInputProcessor(
             player,
@@ -165,6 +171,7 @@ class WorldRenderer(private val clock: GameClock) {
                         interactionSystem.removeInteractable(target.bounds)
                         collisionSystem.removeCollisionBox(target.name)
                         gameMap.removeStoneLayer(target)
+                        stonesList.firstOrNull { it.name == target.name }?.breakStone()
                     }
                 }
             })
@@ -230,6 +237,7 @@ class WorldRenderer(private val clock: GameClock) {
 
         val interactableObject = interactionSystem.getNearbyInteraction(interactionBounds)
         particleSystem.update(delta)
+        stonesList.forEach { it.update(delta) }
 
         gameMap.renderMapBeforePlayer(worldCamera)
 
@@ -240,6 +248,7 @@ class WorldRenderer(private val clock: GameClock) {
         }
         particleSystem.drawBehindPlayer(batch, player.y)
         droppedItems.forEach { it.render(batch) }
+        stonesList.forEach { it.render(batch) }
         player.draw(batch)
         batch.end()
 
