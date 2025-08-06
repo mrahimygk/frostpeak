@@ -44,12 +44,11 @@ abstract class Tree(
         currentStageFull.regionHeight - 24
     )
 
-    override val x: Float
-        get() = getCollisionBounds().x
-    override val y: Float
-        get() = getCollisionBounds().y
+    override val rect: Rectangle
+        get() = getCollisionBounds()
 
     override fun onToolUsed(tool: Tool) {
+        println("Using $tool on a ${this.javaClass.simpleName}")
         if (tool is Axe) {
             //TODO: check for growth stage etc
             println("Using tool on a ${this.javaClass.simpleName}")

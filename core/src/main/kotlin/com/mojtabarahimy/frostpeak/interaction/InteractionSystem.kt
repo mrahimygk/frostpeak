@@ -10,13 +10,7 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.math.MathUtils.sin
 import com.badlogic.gdx.math.Rectangle
-
-data class InteractableObject(
-    val name: String,
-    val type: String?,
-    val bounds: Rectangle,
-    val onInteract: (() -> Unit)? = null
-)
+import com.mojtabarahimy.frostpeak.entities.tools.ToolTarget
 
 class InteractionSystem {
     private val interactables = mutableListOf<InteractableObject>()
@@ -28,13 +22,24 @@ class InteractionSystem {
 
         for (mapObject in objectLayer.objects) {
             if (mapObject is RectangleMapObject) {
-                temp.add(
-                    InteractableObject(
-                        mapObject.name,
-                        mapObject.properties.get("type") as? String,
-                        mapObject.rectangle
-                    )
+                val obj = InteractableObject.BasicInteractable(
+                    mapObject.name,
+                    mapObject.properties.get("type") as? String,
+                    mapObject.rectangle
                 )
+
+                if (obj.type?.equals("stone") == true) {
+                    temp.add(
+                        InteractableObject.StoneInteractable(
+                            obj.name,
+                            obj.type,
+                            obj.bounds,
+                            mapObject.properties.get("hp") as? Int? ?: 1
+                        )
+                    )
+                } else {
+                    temp.add(obj)
+                }
             }
 
             //TODO: add other interactables (i.e CircleMapObjects
@@ -99,7 +104,11 @@ class InteractionSystem {
     ) {
         stateTime += delta
         interactableObject?.run {
-            val layout = GlyphLayout(font, "Press E")
+            val hint = when (interactableObject) {
+                is InteractableObject.StoneInteractable -> "Press Z to use tool"
+                else -> "Press E"
+            }
+            val layout = GlyphLayout(font, hint)
             val offsetX = -layout.width / 2
             val baseY = 50f
             val floatOffset = (sin(stateTime * 2f) * 5f)
@@ -114,13 +123,24 @@ class InteractionSystem {
         interactable: Rectangle,
         onInteract: (() -> Unit)
     ) {
-        interactables.add(InteractableObject(name, type, interactable, onInteract))
+        interactables.add(
+            InteractableObject.BasicInteractable(
+                name,
+                type,
+                interactable,
+                onInteract
+            )
+        )
     }
 
     fun removeInteractable(interactable: Rectangle) {
         interactables.indexOfFirst { it.bounds == interactable }.let {
             if (it >= 0) interactables.removeAt(it)
         }
+    }
+
+    fun getToolTargets(): List<ToolTarget> {
+        return interactables.filterIsInstance<InteractableObject.StoneInteractable>()
     }
 
     fun drawDebug(shapeRenderer: ShapeRenderer) {

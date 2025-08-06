@@ -93,6 +93,10 @@ class CollisionSystem {
         }
     }
 
+    fun removeCollisionBox(collisionName: String) {
+        colliders.removeIf { it.name == collisionName }
+    }
+
     fun removeCollisionBox(collisionBounds: Polygon) {
         colliders.indexOfFirst { it is Collider.Poly && it.polygon == collisionBounds }.let {
             if (it >= 0) colliders.removeAt(it)

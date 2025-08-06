@@ -1,21 +1,26 @@
 package com.mojtabarahimy.frostpeak.map
 
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.maps.MapGroupLayer
 import com.badlogic.gdx.maps.MapLayer
+import com.badlogic.gdx.maps.MapLayers
 import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import com.badlogic.gdx.math.Vector2
 import com.mojtabarahimy.frostpeak.entities.Direction
+import com.mojtabarahimy.frostpeak.interaction.InteractableObject
 import com.mojtabarahimy.frostpeak.util.Constants
 
 class GameMap {
 
     lateinit var map: TiledMap
     private lateinit var renderer: OrthogonalTiledMapRenderer
-    private lateinit var beforePlayerLayers: Array<String>
-    private lateinit var afterPlayerLayers: Array<String>
+    private lateinit var beforePlayerLayers: IntArray
+    private lateinit var afterPlayerLayers: IntArray
+    private lateinit var stonesLayers: IntArray
+    private val stonesLayerNames = mutableListOf<String>()
     private val spawnPoints: MutableMap<String, SpawnPoint> = mutableMapOf()
 
     fun initMap(
@@ -28,8 +33,21 @@ class GameMap {
     ): Vector2 {
         map = TmxMapLoader().load(mapFilePath)
         renderer = OrthogonalTiledMapRenderer(map, unitScale)
-        this.beforePlayerLayers = beforePlayerLayers
-        this.afterPlayerLayers = afterPlayerLayers
+        val stoneLayerNamesTmpList = mutableListOf<String>()
+        map.layers.get("stones")?.let { stonesGroup ->
+            if (stonesGroup is MapGroupLayer) {
+                stonesGroup.layers.forEach { stoneLayer ->
+                    stoneLayerNamesTmpList.add(stoneLayer.name)
+                }
+            }
+        }
+
+        stonesLayerNames.clear()
+        stonesLayerNames.addAll(stoneLayerNamesTmpList)
+        recalculateStoneLayers()
+
+        this.beforePlayerLayers = beforePlayerLayers.toMapIndices(map)
+        this.afterPlayerLayers = afterPlayerLayers.toMapIndices(map)
 
         val musicPath = map.properties["music"] as? String
         //TODO: musicPath?.let { MusicManager.playMusic(it) }
@@ -38,6 +56,15 @@ class GameMap {
 
         onLoadedNewMap?.invoke(spawnPointName, mapFilePath)
         return getMapSize()
+    }
+
+    private fun recalculateStoneLayers() {
+        val stoneLayerIndicesTmpList = mutableListOf<Int>()
+        stonesLayerNames.forEach {
+            stoneLayerIndicesTmpList.add(findLayerIndex(map, it))
+        }
+
+        this.stonesLayers = stoneLayerIndicesTmpList.toIntArray()
     }
 
     private fun fillPlayerSpawnPoints() {
@@ -81,12 +108,13 @@ class GameMap {
 
     fun renderMapBeforePlayer(camera: OrthographicCamera) {
         renderer.setView(camera)
-        renderer.render(beforePlayerLayers.toMapIndices(map))
+        renderer.render(beforePlayerLayers)
+        renderer.render(stonesLayers)
     }
 
     fun renderMapAfterPlayer(camera: OrthographicCamera) {
         renderer.setView(camera)
-        renderer.render(afterPlayerLayers.toMapIndices(map))
+        renderer.render(afterPlayerLayers)
     }
 
     fun dispose() {
@@ -111,6 +139,27 @@ class GameMap {
             spawnPointName,
             onLoadedNewMap
         )
+    }
+
+    fun findLayerIndex(map: TiledMap, targetName: String): Int {
+        var index = -1
+        fun recurse(layers: MapLayers): Int {
+            for (layer in layers) {
+                if (layer.name == targetName) return index
+                index++
+                if (layer is MapGroupLayer) {
+                    val found = recurse(layer.layers)
+                    if (found != -1) return found
+                }
+            }
+            return -1
+        }
+        return recurse(map.layers)
+    }
+
+    fun removeStoneLayer(target: InteractableObject.StoneInteractable) {
+        stonesLayerNames.remove(target.name)
+        recalculateStoneLayers()
     }
 }
 

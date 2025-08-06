@@ -2,12 +2,12 @@ package com.mojtabarahimy.frostpeak.entities
 
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.math.Vector2
 import com.mojtabarahimy.frostpeak.collision.CollisionSystem
 import com.mojtabarahimy.frostpeak.entities.items.ItemInventory
 import com.mojtabarahimy.frostpeak.entities.npc.Npc
 import com.mojtabarahimy.frostpeak.entities.tools.ToolInventory
 import com.mojtabarahimy.frostpeak.entities.tools.ToolTarget
+import com.mojtabarahimy.frostpeak.util.ktx.distanceToRectangleEdge
 
 class Player(
     val texture: Texture,
@@ -26,8 +26,10 @@ class Player(
         toolInventory.previousTool()
     }
 
-    fun useTool(targets: List<ToolTarget>) {
-        toolInventory.useSelectedTool(detectToolTarget(targets))
+    fun useTool(targets: List<ToolTarget>): ToolTarget? {
+        val target = detectToolTarget(targets)
+        toolInventory.useSelectedTool(target)
+        return target
     }
 
     private fun detectToolTarget(objects: List<ToolTarget>): ToolTarget? {
@@ -44,7 +46,7 @@ class Player(
         }
 
         return objects.firstOrNull {
-            Vector2(it.x, it.y).dst(playerFacingX, playerFacingY) < 20f
+            it.rect.distanceToRectangleEdge(playerFacingX, playerFacingY) < 20f
         }
     }
 }

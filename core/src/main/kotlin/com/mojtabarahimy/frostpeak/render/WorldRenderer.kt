@@ -21,6 +21,7 @@ import com.mojtabarahimy.frostpeak.entities.fruit.harvest.DroppedItem
 import com.mojtabarahimy.frostpeak.entities.items.Item
 import com.mojtabarahimy.frostpeak.entities.tools.ToolTarget
 import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
+import com.mojtabarahimy.frostpeak.interaction.InteractableObject
 import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
 import com.mojtabarahimy.frostpeak.map.GameMap
 import com.mojtabarahimy.frostpeak.util.Constants
@@ -91,7 +92,7 @@ class WorldRenderer(private val clock: GameClock) {
 
                 collisionSystem.addCollisionBox(item.itemId, box)
 
-                interactionSystem.addInteractable(item.itemId,item.itemId, box, {
+                interactionSystem.addInteractable(item.itemId, item.itemId, box, {
                     player.itemInventory.addItem(
                         Item(
                             item.itemId,
@@ -129,7 +130,6 @@ class WorldRenderer(private val clock: GameClock) {
 
 
         playerInputProcessor = PlayerInputProcessor(
-            getWorldTargets(),
             player,
             playerMovement = { delta, dx, dy ->
                 player.update(delta, dx, dy)
@@ -157,6 +157,16 @@ class WorldRenderer(private val clock: GameClock) {
                             spawnPlayer("spawn_bed")
                         }
                     )
+            },
+            onUsingTool = {
+                val target = player.useTool(getWorldTargets())
+                if (target is InteractableObject.StoneInteractable) {
+                    target.onInteract = {
+                        interactionSystem.removeInteractable(target.bounds)
+                        collisionSystem.removeCollisionBox(target.name)
+                        gameMap.removeStoneLayer(target)
+                    }
+                }
             })
 
         Gdx.input.inputProcessor = playerInputProcessor
@@ -179,8 +189,12 @@ class WorldRenderer(private val clock: GameClock) {
     }
 
     private fun getWorldTargets(): List<ToolTarget> {
-        if (!mapHasGrapevine()) return emptyList()
-        return listOf(grapevine)
+        val list = mutableListOf<ToolTarget>()
+        if (mapHasGrapevine()) list.add(grapevine)
+
+        list.addAll(interactionSystem.getToolTargets())
+
+        return list
     }
 
     private fun checkAddGrapevineToSystems(mapFilePath: String) {
@@ -245,10 +259,11 @@ class WorldRenderer(private val clock: GameClock) {
         )
         batch.end()
 
-        val newMapSize = mapTransitionController.update(player.getInteractionBounds()) { spawnPointName, targetMap ->
-            spawnPlayer(spawnPointName)
-            initializeMap(targetMap)
-        }
+        val newMapSize =
+            mapTransitionController.update(player.getInteractionBounds()) { spawnPointName, targetMap ->
+                spawnPlayer(spawnPointName)
+                initializeMap(targetMap)
+            }
 
         newMapSize?.let { mapSize = it }
 
