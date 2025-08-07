@@ -5,8 +5,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.mojtabarahimy.frostpeak.util.Constants
 import java.util.Locale
 
-enum class Season { SPRING, SUMMER, FALL, WINTER }
-
 val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 
 
@@ -19,7 +17,7 @@ class GameClock(
 
     private var hours = 6
     private var minutes = 0
-    private var day = 1
+    var day = 1
     var dayCounter = 0
     var season = Season.SPRING
     var year = 1

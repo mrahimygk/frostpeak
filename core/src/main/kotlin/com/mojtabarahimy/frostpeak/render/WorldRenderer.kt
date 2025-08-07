@@ -13,8 +13,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mojtabarahimy.frostpeak.collision.CollisionSystem
 import com.mojtabarahimy.frostpeak.controller.MapTransitionController
 import com.mojtabarahimy.frostpeak.controller.WorldCameraController
-import com.mojtabarahimy.frostpeak.controller.dialog.DialogController
-import com.mojtabarahimy.frostpeak.controller.dialog.DialogLine
+import com.mojtabarahimy.frostpeak.controller.dialog.DialogManager
 import com.mojtabarahimy.frostpeak.controller.npc.NpcController
 import com.mojtabarahimy.frostpeak.data.PlayerData
 import com.mojtabarahimy.frostpeak.data.time.GameClock
@@ -35,7 +34,7 @@ import com.mojtabarahimy.frostpeak.util.Constants
 class WorldRenderer(
     private val clock: GameClock,
     private val playerData: PlayerData,
-    private val dialogController: DialogController
+    private val dialogManager: DialogManager
 ) {
 
     private val batch = SpriteBatch()
@@ -139,12 +138,6 @@ class WorldRenderer(
         )
         worldCamera.update()
 
-        getWorldTargets().forEach {
-            if(it is InteractableObject.StoneInteractable){
-                stonesList.add(BreakableStone(it.name, it.bounds))
-            }
-        }
-
         playerInputProcessor = PlayerInputProcessor(
             player,
             playerMovement = { delta, dx, dy ->
@@ -175,7 +168,7 @@ class WorldRenderer(
                     )
             },
             onUsingTool = {
-                val target = player.useTool(getWorldTargets())
+                val target = player.useTool(getWorldTargets(), playerData.energy)
                 playerData.useEnergy(5f)
                 if (target is InteractableObject.StoneInteractable) {
                     target.onInteract = {
@@ -198,15 +191,7 @@ class WorldRenderer(
         }
 
         npcController.onInteract = { person ->
-            //TODO: get dialog from dialog manager
-            println("interacting with $person")
-            val dialog = listOf(
-                DialogLine("Hello there!"),
-                DialogLine("The crops are growing well this season."),
-                    DialogLine("See you around!")
-            )
-
-            dialogController.startDialog(dialog)
+            dialogManager.onInteract(person)
         }
 
         mapTransitionController = MapTransitionController(gameMap)
@@ -311,9 +296,19 @@ class WorldRenderer(
     private fun initSystems() {
         collisionSystem.initMap(gameMap.map)
         interactionSystem.initMap(gameMap.map)
+        initWorldTargets()
+
         npcController.initMap(gameMap.map)
         npcController.initCollision(collisionSystem)
         npcController.initInteraction(interactionSystem)
+    }
+
+    private fun initWorldTargets() {
+        getWorldTargets().forEach {
+            if (it is InteractableObject.StoneInteractable) {
+                stonesList.add(BreakableStone(it.name, it.bounds))
+            }
+        }
     }
 
 

@@ -22,6 +22,19 @@ open class Npc(
     private val collisionSystem: CollisionSystem
 ) : Person, Drawable by MultipleLayerDrawable(), CollisionPerformer by BasicCollisionPerformer() {
 
+    override var hasIntroduced: Boolean = false
+        get() = field //TODO("load from save file")
+        set(value) {
+            field = value
+
+            //TODO: save
+        }
+
+    override val name: String
+        get() = ""
+    override val nameId: String
+        get() = name
+
     private val frameCols = 4
     private val frameRows = 4
 

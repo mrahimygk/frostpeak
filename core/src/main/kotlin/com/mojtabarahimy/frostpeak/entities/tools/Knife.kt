@@ -8,6 +8,9 @@ class Knife : Tool , XpGainer by XpGainerImpl() {
     override val texture: Texture
         get() = Texture("tools/knife.png")
 
+    override val energyNeededPerSwing: Float
+        get() = 2f
+
     override fun use(target: ToolTarget?) {
         if (target != null) {
             target.onToolUsed(this)

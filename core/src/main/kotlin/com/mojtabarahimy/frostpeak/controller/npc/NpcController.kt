@@ -27,14 +27,15 @@ class NpcController(collisionSystem: CollisionSystem) {
     )
 
     fun initMap(map: TiledMap) {
-        val npcLayer = map.layers.get("npc") as MapLayer
+        npcs.clear()
+
+        val npcLayer = map.layers.get("npc") ?: return
         for (obj in npcLayer.objects) {
             if (obj is RectangleMapObject) {
                 georgiana.setPosition(obj.rectangle.x, obj.rectangle.y)
             }
         }
 
-        npcs.clear()
         npcs.add(georgiana)
 
     }

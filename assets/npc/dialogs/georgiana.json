@@ -1,0 +1,86 @@
+{
+  "introduction": [
+    "Hi there young man",
+    "What is your father's name?",
+    "Your father is my cousin you know?"
+  ],
+
+  "spring": {
+    "day_1": [
+      "Spring day 1 line 1",
+      "Spring day 1 line 2",
+      "Spring day 1 line 3"
+    ],
+
+    "day_7": [
+      "Spring day 7 line 1",
+      "Spring day 7 line 2",
+      "Spring day 7 line 3"
+    ]
+  },
+  "summer": {
+    "day_1": [
+      "Summer day 1 line 1",
+      "Summer day 1 line 2",
+      "Summer day 1 line 3"
+    ],
+
+    "day_7": [
+      "Summer day 7 line 1",
+      "Summer day 7 line 2",
+      "Summer day 7 line 3"
+    ]
+  },
+  "autumn": {
+    "day_1": [
+      "Autumn day 1 line 1",
+      "Autumn day 1 line 2",
+      "Autumn day 1 line 3"
+    ],
+
+    "day_7": [
+      "Autumn day 7 line 1",
+      "Autumn day 7 line 2",
+      "Autumn day 7 line 3"
+    ]
+  },
+  "winter": {
+    "day_1": [
+      "Winter day 1 line 1",
+      "Winter day 1 line 2",
+      "Winter day 1 line 3"
+    ],
+
+    "day_7": [
+      "Winter day 7 line 1",
+      "Winter day 7 line 2",
+      "Winter day 7 line 3"
+    ]
+  },
+
+  "weather": {
+    "rainy": [
+      "it's rainy line 1",
+      "it's rainy line 2"
+    ]
+  },
+
+  "festivals": {
+    "alaki": {
+      "start": [
+        "Festival Alaki Start line 1",
+        "Festival Alaki Start line 2"
+      ],
+      "end" : [
+        "Festival Alaki End line 1",
+        "Festival Alaki End line 2"
+      ]
+    }
+  },
+  "relationship": {
+    "heart_1": [
+      "relationship heart 1 line 1",
+      "relationship heart 1 line 2"
+    ]
+  }
+}

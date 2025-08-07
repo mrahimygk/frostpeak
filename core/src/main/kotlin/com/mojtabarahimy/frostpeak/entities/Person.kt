@@ -4,7 +4,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Rectangle
 
-interface Person {
+interface Person : Talkable {
+    val name: String
     var x: Float
     var y: Float
     var currentDirection: Direction

@@ -8,6 +8,9 @@ class Pickax : Tool, XpGainer by XpGainerImpl() {
     override val texture: Texture
         get() = Texture("tools/pickax.png")
 
+    override val energyNeededPerSwing: Float
+        get() = 6f
+
     override fun use(target: ToolTarget?) {
         if (target != null) {
             target.onToolUsed(this)

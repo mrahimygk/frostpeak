@@ -15,6 +15,9 @@ class Player(
     private val collisionSystem: CollisionSystem
 ) : Person by Npc(texture, walkSound, collisionSystem) {
 
+    override val name: String
+        get() = "TODO(Load from gamer's prefs)"
+
     val toolInventory = ToolInventory()
     val itemInventory = ItemInventory()
 
@@ -26,7 +29,7 @@ class Player(
         toolInventory.previousTool()
     }
 
-    fun useTool(targets: List<ToolTarget>): ToolTarget? {
+    fun useTool(targets: List<ToolTarget>, playerEnergy: Float): ToolTarget? {
         val target = detectToolTarget(targets)
         toolInventory.useSelectedTool(target)
         return target

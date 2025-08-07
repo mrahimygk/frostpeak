@@ -8,6 +8,9 @@ class Shovel : Tool, XpGainer by XpGainerImpl() {
     override val texture: Texture
         get() = Texture("tools/shovel.png")
 
+    override val energyNeededPerSwing: Float
+        get() = 4f
+
     override fun use(target: ToolTarget?) {
         if (target != null) {
             target.onToolUsed(this)

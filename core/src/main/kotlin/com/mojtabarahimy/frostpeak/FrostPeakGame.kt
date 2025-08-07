@@ -6,12 +6,14 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.NinePatch
-import com.mojtabarahimy.frostpeak.controller.dialog.DialogController
+import com.mojtabarahimy.frostpeak.controller.dialog.DialogManager
+import com.mojtabarahimy.frostpeak.controller.dialog.DialogStore
 import com.mojtabarahimy.frostpeak.data.PlayerData
+import com.mojtabarahimy.frostpeak.data.time.GameClock
 import com.mojtabarahimy.frostpeak.music.MusicManager
+import com.mojtabarahimy.frostpeak.render.DialogRenderer
 import com.mojtabarahimy.frostpeak.render.HUDRenderer
 import com.mojtabarahimy.frostpeak.render.WorldRenderer
-import com.mojtabarahimy.frostpeak.data.time.GameClock
 
 class FrostPeakGame : ApplicationAdapter() {
 
@@ -30,10 +32,12 @@ class FrostPeakGame : ApplicationAdapter() {
         val dialogFont = BitmapFont()
         val dialogFrame = Texture("dialog/dialog_frame.png")
         val ninePatch = NinePatch(dialogFrame, 14, 25, 12, 9)
-        val dialogController = DialogController(dialogFont, ninePatch)
+        val dialogStore = DialogStore()
+        val dialogRenderer = DialogRenderer(dialogFont, ninePatch)
+        val dialogManager = DialogManager(dialogStore, dialogRenderer, clock)
 
-        worldRenderer = WorldRenderer(clock, playerData, dialogController)
-        hudRenderer = HUDRenderer(clock, playerData, dialogController)
+        worldRenderer = WorldRenderer(clock, playerData, dialogManager)
+        hudRenderer = HUDRenderer(clock, playerData, dialogRenderer)
     }
 
     override fun render() {

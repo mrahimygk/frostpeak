@@ -1,12 +1,13 @@
-package com.mojtabarahimy.frostpeak.controller.dialog
+package com.mojtabarahimy.frostpeak.render
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.mojtabarahimy.frostpeak.controller.dialog.DialogLine
 
-class DialogController(
+class DialogRenderer(
     private val font: BitmapFont,
     private val dialogBox: NinePatch
 ) {

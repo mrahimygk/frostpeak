@@ -8,8 +8,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.viewport.FitViewport
-import com.mojtabarahimy.frostpeak.controller.dialog.DialogController
-import com.mojtabarahimy.frostpeak.controller.dialog.DialogLine
 import com.mojtabarahimy.frostpeak.data.PlayerData
 import com.mojtabarahimy.frostpeak.data.time.GameClock
 import com.mojtabarahimy.frostpeak.entities.items.ItemInventory
@@ -19,7 +17,7 @@ import com.mojtabarahimy.frostpeak.util.Constants
 class HUDRenderer(
     private val clock: GameClock,
     private val playerData: PlayerData,
-    private val dialogController: DialogController
+    private val dialogRenderer: DialogRenderer
 ) {
     private val uiCamera = OrthographicCamera()
     private val uiViewport: FitViewport =
@@ -48,15 +46,15 @@ class HUDRenderer(
         batch.projectionMatrix = uiCamera.combined
         shapeRenderer.projectionMatrix = uiCamera.combined
 
-        dialogController.handleInput()
-        dialogController.update(delta)
+        dialogRenderer.handleInput()
+        dialogRenderer.update(delta)
 
         batch.begin()
         clock.draw(batch, font)
         drawInventory(inventory, playerY)
         drawItemInventory(itemInventory, playerY)
         drawMoney(playerData)
-        dialogController.draw(batch, uiViewport.worldWidth, uiViewport.worldHeight)
+        dialogRenderer.draw(batch, uiViewport.worldWidth, uiViewport.worldHeight)
         batch.end()
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
@@ -78,8 +76,6 @@ class HUDRenderer(
         shapeRenderer.color = Color.GREEN
         shapeRenderer.rect(x, y, width * energyRatio, height)
     }
-
-    fun startDialog(pages: List<DialogLine>) = dialogController.startDialog(pages)
 
     fun resize(width: Int, height: Int) {
         uiViewport.update(width, height)
