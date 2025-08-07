@@ -28,7 +28,7 @@ class InteractionSystem {
                     mapObject.rectangle
                 )
 
-                if (obj.type?.equals("stone") == true) {
+                if (obj.type == InteractableType.Stone) {
                     temp.add(
                         InteractableObject.StoneInteractable(
                             obj.name,
