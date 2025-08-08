@@ -2,6 +2,8 @@ package com.mojtabarahimy.frostpeak.data.time
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.MathUtils
+import com.mojtabarahimy.frostpeak.data.WeatherType
 import com.mojtabarahimy.frostpeak.util.Constants
 import java.util.Locale
 
@@ -9,6 +11,7 @@ val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 
 
 class GameClock(
+    var currentWeather: WeatherType = WeatherType.SUNNY,
     var onNextDay: ((dayInMonth: Int, dayInYear: Int) -> Unit)? = null,
     var onNextWeek: ((dayInYear: Int) -> Unit)? = null,
     var onNextSeason: ((dayInYear: Int, season: Season) -> Unit)? = null,
@@ -23,12 +26,14 @@ class GameClock(
     var year = 1
 
     private var timeAccumulator = 0f
-    private val minutesPerSecond = 1
+    private val minutesPerSecond = 300
 
     var isPaused = false
 
     val dayOfWeek: String
         get() = daysOfWeek[(getDayIndex() % 7)]
+
+    private var nextWeatherChangeHour = 8
 
     fun update(delta: Float) {
         if (isPaused) return
@@ -38,6 +43,10 @@ class GameClock(
         while (timeAccumulator >= 10f) {
             addMinutes(minutesPerSecond * 10)
             timeAccumulator -= 10f
+        }
+
+        if (hours >= nextWeatherChangeHour) {
+            changeWeather()
         }
     }
 
@@ -70,6 +79,18 @@ class GameClock(
                 onNextYear?.invoke(year)
             }
         }
+    }
+
+    private fun changeWeather() {
+        println("Weather is changing")
+        currentWeather = if (MathUtils.randomBoolean(0.93f)) {
+            if (currentWeather == WeatherType.SUNNY) WeatherType.RAINY else WeatherType.SUNNY
+        } else {
+            currentWeather
+        }
+
+        println("weather changed to $currentWeather")
+        nextWeatherChangeHour = hours + MathUtils.random(3, 6)
     }
 
     private fun getTimeString(): String {

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.NinePatch
+import com.badlogic.gdx.graphics.g2d.ParticleEffect
 import com.mojtabarahimy.frostpeak.controller.dialog.DialogManager
 import com.mojtabarahimy.frostpeak.controller.dialog.DialogStore
 import com.mojtabarahimy.frostpeak.data.PlayerData
@@ -13,6 +14,7 @@ import com.mojtabarahimy.frostpeak.data.time.GameClock
 import com.mojtabarahimy.frostpeak.music.MusicManager
 import com.mojtabarahimy.frostpeak.render.DialogRenderer
 import com.mojtabarahimy.frostpeak.render.HUDRenderer
+import com.mojtabarahimy.frostpeak.render.WeatherSystem
 import com.mojtabarahimy.frostpeak.render.WorldRenderer
 
 class FrostPeakGame : ApplicationAdapter() {
@@ -36,7 +38,14 @@ class FrostPeakGame : ApplicationAdapter() {
         val dialogRenderer = DialogRenderer(dialogFont, ninePatch)
         val dialogManager = DialogManager(dialogStore, dialogRenderer, clock)
 
-        worldRenderer = WorldRenderer(clock, playerData, dialogManager)
+        val rainEffect = ParticleEffect()
+        rainEffect.load(Gdx.files.internal("particles/raindrops.p"), Gdx.files.internal(""))
+        rainEffect.setPosition(0f, Gdx.graphics.height.toFloat())
+        rainEffect.start()
+
+        val weatherSystem = WeatherSystem(rainEffect)
+
+        worldRenderer = WorldRenderer(clock, playerData, dialogManager, weatherSystem)
         hudRenderer = HUDRenderer(clock, playerData, dialogRenderer)
     }
 

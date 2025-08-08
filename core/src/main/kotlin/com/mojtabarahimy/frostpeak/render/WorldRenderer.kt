@@ -34,7 +34,8 @@ import com.mojtabarahimy.frostpeak.util.Constants
 class WorldRenderer(
     private val clock: GameClock,
     private val playerData: PlayerData,
-    private val dialogManager: DialogManager
+    private val dialogManager: DialogManager,
+    private val weatherSystem: WeatherSystem
 ) {
 
     private val batch = SpriteBatch()
@@ -276,6 +277,8 @@ class WorldRenderer(
             font,
             delta
         )
+
+        weatherSystem.updateAndRender(batch, clock.currentWeather)
         batch.end()
 
         val newMapSize =
