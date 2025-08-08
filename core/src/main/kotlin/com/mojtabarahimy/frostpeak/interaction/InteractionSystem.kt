@@ -23,22 +23,38 @@ class InteractionSystem {
         for (mapObject in objectLayer.objects) {
             if (mapObject is RectangleMapObject) {
                 val obj = InteractableObject.BasicInteractable(
-                    mapObject.name,
-                    mapObject.properties.get("type")?.let { InteractableType.valueOf(it as String) },
+                    mapObject.name ?: "",
+                    mapObject.properties.get("type")
+                        ?.let { InteractableType.valueOf(it as String) },
                     mapObject.rectangle
                 )
 
-                if (obj.type == InteractableType.Stone) {
-                    temp.add(
-                        InteractableObject.StoneInteractable(
-                            obj.name,
-                            obj.type,
-                            obj.bounds,
-                            mapObject.properties.get("hp") as? Int? ?: 1
+                when (obj.type) {
+                    InteractableType.Stone -> {
+                        temp.add(
+                            InteractableObject.StoneInteractable(
+                                obj.name,
+                                obj.type,
+                                obj.bounds,
+                                mapObject.properties.get("hp") as? Int? ?: 1
+                            )
                         )
-                    )
-                } else {
-                    temp.add(obj)
+                    }
+
+                    InteractableType.Diggable -> {
+                        temp.add(
+                            InteractableObject.GroundInteractable(
+                                obj.name,
+                                obj.type,
+                                obj.bounds,
+                                0
+                            )
+                        )
+                    }
+
+                    else -> {
+                        temp.add(obj)
+                    }
                 }
             }
 
@@ -105,7 +121,7 @@ class InteractionSystem {
         stateTime += delta
         interactableObject?.run {
             val hint = when (interactableObject.type) {
-                InteractableType.Stone -> "Press Z to use tool"
+                InteractableType.Stone, InteractableType.Diggable -> "Press Z to use tool"
                 InteractableType.Npc -> "Press E to talk"
                 else -> "Press E"
             }
@@ -141,7 +157,14 @@ class InteractionSystem {
     }
 
     fun getToolTargets(): List<ToolTarget> {
-        return interactables.filterIsInstance<InteractableObject.StoneInteractable>()
+        return mutableListOf<ToolTarget>().apply {
+            addAll(interactables.filterIsInstance<InteractableObject.StoneInteractable>())
+            addAll(interactables.filterIsInstance<InteractableObject.GroundInteractable>())
+        }
+    }
+
+    fun getGroundInteractables() : List<InteractableObject.GroundInteractable>{
+        return interactables.filterIsInstance<InteractableObject.GroundInteractable>()
     }
 
     fun drawDebug(shapeRenderer: ShapeRenderer) {

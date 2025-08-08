@@ -15,6 +15,7 @@ import com.mojtabarahimy.frostpeak.controller.MapTransitionController
 import com.mojtabarahimy.frostpeak.controller.WorldCameraController
 import com.mojtabarahimy.frostpeak.controller.dialog.DialogManager
 import com.mojtabarahimy.frostpeak.controller.npc.NpcController
+import com.mojtabarahimy.frostpeak.data.GroundHolesManager
 import com.mojtabarahimy.frostpeak.data.PlayerData
 import com.mojtabarahimy.frostpeak.data.time.GameClock
 import com.mojtabarahimy.frostpeak.entities.Player
@@ -61,6 +62,7 @@ class WorldRenderer(
     private val interactionSystem = InteractionSystem()
     private val stonesList = mutableListOf<BreakableStone>()
     private val particleSystem = FruitParticleSystem()
+    private val groundHolesManager : GroundHolesManager
 
     private val shapeRenderer = ShapeRenderer()
 
@@ -130,6 +132,8 @@ class WorldRenderer(
 
         initializeMap(mapName)
 
+        groundHolesManager = GroundHolesManager(interactionSystem.getGroundInteractables())
+
         player = Player(texture, walkSound, collisionSystem)
 
         worldCamera.position.set(
@@ -171,12 +175,24 @@ class WorldRenderer(
             onUsingTool = {
                 val target = player.useTool(getWorldTargets(), playerData.energy)
                 playerData.useEnergy(5f)
-                if (target is InteractableObject.StoneInteractable) {
-                    target.onInteract = {
-                        interactionSystem.removeInteractable(target.bounds)
-                        collisionSystem.removeCollisionBox(target.name)
-                        gameMap.removeStoneLayer(target)
-                        stonesList.firstOrNull { it.name == target.name }?.breakStone()
+                when (target) {
+                    is InteractableObject.StoneInteractable -> {
+                        target.onInteract = {
+                            interactionSystem.removeInteractable(target.bounds)
+                            collisionSystem.removeCollisionBox(target.name)
+                            gameMap.removeStoneLayer(target)
+                            stonesList.firstOrNull { it.name == target.name }?.breakStone()
+                        }
+                    }
+
+                    is InteractableObject.GroundInteractable -> {
+                        target.onInteract = {
+                            //TODO: remove interactable if digged enough,
+                            //TODO: change it to bucket tool if it's raining
+                            groundHolesManager.dig(target)
+                            collisionSystem.addCollisionBox(target.name, target.bounds)
+                            //TODO: animation
+                        }
                     }
                 }
             })
@@ -259,6 +275,7 @@ class WorldRenderer(
         particleSystem.drawBehindPlayer(batch, player.y)
         droppedItems.forEach { it.render(batch) }
         stonesList.forEach { it.render(batch) }
+        groundHolesManager.render(batch)
         npcController.render(batch)
         player.draw(batch)
         batch.end()

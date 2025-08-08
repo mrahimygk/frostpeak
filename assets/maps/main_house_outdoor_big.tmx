@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="200" height="149" tilewidth="4" tileheight="4" infinite="0" nextlayerid="15" nextobjectid="18">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="200" height="149" tilewidth="4" tileheight="4" infinite="0" nextlayerid="15" nextobjectid="19">
  <properties>
   <property name="music" value="audio/main_house_outdoor.mp3"/>
  </properties>
@@ -936,6 +936,7 @@
  <objectgroup id="6" name="objects">
   <object id="1" name="house_door" x="622.5" y="523.5" width="15" height="25"/>
   <object id="5" name="mullberry_tree_main" x="704.375" y="519.375" width="40.75" height="32.75"/>
+  <object id="18" type="Diggable" x="393.5" y="409" width="36" height="30"/>
  </objectgroup>
  <objectgroup id="12" name="exits">
   <object id="8" name="to_gardens_area" x="787.833" y="560" width="11.6667" height="35.5">
