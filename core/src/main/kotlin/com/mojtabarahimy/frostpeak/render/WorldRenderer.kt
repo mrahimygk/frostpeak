@@ -278,7 +278,7 @@ class WorldRenderer(
             delta
         )
 
-        weatherSystem.updateAndRender(batch, clock.currentWeather)
+        weatherSystem.updateAndRender(delta, batch, clock.currentWeather)
         batch.end()
 
         val newMapSize =
