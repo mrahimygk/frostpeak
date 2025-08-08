@@ -26,14 +26,14 @@ class GameClock(
     var year = 1
 
     private var timeAccumulator = 0f
-    private val minutesPerSecond = 300
+    private val minutesPerSecond = 1
 
     var isPaused = false
 
     val dayOfWeek: String
         get() = daysOfWeek[(getDayIndex() % 7)]
 
-    private var nextWeatherChangeHour = 8
+    private var nextWeatherChangeHour = 10
 
     fun update(delta: Float) {
         if (isPaused) return
@@ -83,7 +83,7 @@ class GameClock(
 
     private fun changeWeather() {
         println("Weather is changing")
-        currentWeather = if (MathUtils.randomBoolean(0.93f)) {
+        currentWeather = if (MathUtils.randomBoolean(0.3f)) {
             if (currentWeather == WeatherType.SUNNY) WeatherType.RAINY else WeatherType.SUNNY
         } else {
             currentWeather
