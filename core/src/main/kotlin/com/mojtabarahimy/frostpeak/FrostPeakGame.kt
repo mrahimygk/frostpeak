@@ -39,8 +39,8 @@ class FrostPeakGame : ApplicationAdapter() {
         val dialogManager = DialogManager(dialogStore, dialogRenderer, clock)
 
         val rainEffect = ParticleEffect()
-        rainEffect.load(Gdx.files.internal("particles/raindrops.p"), Gdx.files.internal(""))
-        rainEffect.setPosition(0f, Gdx.graphics.height.toFloat())
+        rainEffect.load(Gdx.files.internal("particles/rain.p"), Gdx.files.internal("particles"))
+        rainEffect.setPosition(Gdx.graphics.height*1.5f, Gdx.graphics.height * 2f)
         rainEffect.start()
 
         val weatherSystem = WeatherSystem(rainEffect)
