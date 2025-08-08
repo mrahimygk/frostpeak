@@ -22,18 +22,26 @@ class DialogManager(
 
     }
 
-    fun getDialog(
+    private fun getDialog(
         talkable: Talkable,
         season: Season,
         day: Int,
     ): List<DialogLine>? {
-        return dialogStore.dialogs.firstOrNull { it.npc == talkable.nameId }?.run {
+        var currentDay = day
+
+        dialogStore.dialogs.firstOrNull { it.npc == talkable.nameId }?.run {
             if (!talkable.hasIntroduced) {
                 talkable.hasIntroduced = true
-                dialogs["introduction"]
+                return dialogs["introduction"]
             } else {
-                dialogs["${season.name.lowercase()}.day_${day}"]
+                while (currentDay >= 1) {
+                    val key = "${season.name.lowercase()}.day_$currentDay"
+                    dialogs[key]?.let { return it }
+                    currentDay--
+                }
             }
         }
+
+        return null
     }
 }
