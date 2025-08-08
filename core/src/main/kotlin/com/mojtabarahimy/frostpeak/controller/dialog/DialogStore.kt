@@ -49,9 +49,9 @@ class DialogStore {
         dialogs.add(DialogData(npcName, npcDialogs))
 
         // Docs:
-        println(dialogs.firstOrNull()?.dialogs?.get("introduction"))       // ➜ List of introduction lines
-        println(dialogs.firstOrNull()?.dialogs?.get("spring.day_1"))       // ➜ List of spring day 1 lines
-        println(dialogs.firstOrNull()?.dialogs?.get("festivals.alaki.end"))
+        //dialogs.firstOrNull()?.dialogs?.get("introduction")       // ➜ List of introduction lines
+        //dialogs.firstOrNull()?.dialogs?.get("spring.day_1")       // ➜ List of spring day 1 lines
+        //dialogs.firstOrNull()?.dialogs?.get("festivals.alaki.end")
     }
 
 }
