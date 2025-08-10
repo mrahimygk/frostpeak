@@ -264,6 +264,7 @@ class WorldRenderer(
         particleSystem.update(delta)
         stonesList.forEach { it.update(delta) }
         npcController.update(delta)
+        groundHolesManager.update(delta, clock.currentWeather)
 
         gameMap.renderMapBeforePlayer(worldCamera)
 

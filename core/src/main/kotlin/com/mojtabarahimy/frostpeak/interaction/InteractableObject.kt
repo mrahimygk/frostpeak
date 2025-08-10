@@ -50,6 +50,7 @@ sealed class InteractableObject {
         override val type: InteractableType?,
         override val bounds: Rectangle,
         var digLevel: Int,
+        var waterLevel: Float = 0f,
         override var onInteract: (() -> Unit)? = null
     ) : InteractableObject(), ToolTarget {
 
