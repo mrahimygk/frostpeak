@@ -17,7 +17,7 @@ class Grapevine(
     override val fruitTexture: TextureRegion
         get() = TextureRegion(Texture("crops/grapevine/grape_fruit.png"))
 
-    var onInteract: (() -> Unit)? = null
+    var onInteract: (() -> Boolean)? = null
 
     override fun canInteract(playerPosition: Vector2) = true
 
