@@ -14,6 +14,7 @@ import com.mojtabarahimy.frostpeak.collision.CollisionSystem
 import com.mojtabarahimy.frostpeak.controller.MapTransitionController
 import com.mojtabarahimy.frostpeak.controller.WorldCameraController
 import com.mojtabarahimy.frostpeak.controller.dialog.DialogManager
+import com.mojtabarahimy.frostpeak.controller.dialog.PlayerDialogs
 import com.mojtabarahimy.frostpeak.controller.npc.NpcController
 import com.mojtabarahimy.frostpeak.controller.quests.QuestManager
 import com.mojtabarahimy.frostpeak.data.GroundHolesManager
@@ -124,8 +125,11 @@ class WorldRenderer(
                     droppedItems.remove(item)
                     collisionSystem.removeCollisionBox(box)
                     interactionSystem.removeInteractable(box)
+                    true
                 })
             }
+
+            true
         }
 
         val mapName = "maps/main_house_outdoor_big.tmx"
@@ -200,7 +204,7 @@ class WorldRenderer(
                 quest.questPrerequisites.tools.forEach {
                     toolInventory.addTool(it)
                 }
-                //TODO: render quest info in hud, add tools and items to player inventory
+                //TODO: render quest info in hud, add items to player inventory
             }
         }
 
@@ -226,6 +230,7 @@ class WorldRenderer(
                         collisionSystem.removeCollisionBox(target.name)
                         gameMap.removeStoneLayer(target)
                         stonesList.firstOrNull { it.name == target.name }?.breakStone()
+                        true
                     }
                 }
 
@@ -235,13 +240,17 @@ class WorldRenderer(
                         //TODO: change it to bucket tool if it's raining
                         groundHolesManager.dig(target)
                         collisionSystem.addCollisionBox(target.name, target.bounds)
+                        true
                         //TODO: animation
                     }
                 }
 
                 is InteractableObject.FountainInteractable -> {
                     target.onInteract = {
-                        player.fillBucket(target)
+                        val isResSuccess = player.fillBucket(target)
+                        if (isResSuccess == null) dialogManager.startPlayerDialog(PlayerDialogs.NO_BUCKET)
+
+                        isResSuccess == true
                     }
                 }
             }
@@ -261,6 +270,7 @@ class WorldRenderer(
                 grapevine.getCollisionBounds()
             ) {
                 grapevine.onInteract()
+                true
             }
         }
     }

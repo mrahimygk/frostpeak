@@ -10,7 +10,7 @@ import com.mojtabarahimy.frostpeak.render.DialogRenderer
 
 class DialogManager(
     private val dialogStore: DialogStore,
-    private val dialogRenderer: DialogRenderer,
+    val dialogRenderer: DialogRenderer,
     private val gameClock: GameClock,
     private val questManager: QuestManager
 ) {
@@ -18,7 +18,7 @@ class DialogManager(
     fun onInteract(
         talkable: Talkable,
         onStartQuest: (quest: QuestDefinition) -> Unit
-    ) {
+    ) : Boolean {
         getDialog(
             talkable,
             gameClock.year,
@@ -27,7 +27,10 @@ class DialogManager(
             onStartQuest
         )?.let {
             dialogRenderer.startDialog(it)
+            return true
         }
+
+        return false
     }
 
     private fun getDialog(
@@ -76,5 +79,11 @@ class DialogManager(
         }
 
         return null
+    }
+
+    fun startPlayerDialog(noBucket: PlayerDialogs) {
+        dialogStore.getPlayerDialog(noBucket)?.let {
+            dialogRenderer.startDialog(it)
+        }
     }
 }

@@ -21,6 +21,24 @@ class DialogStore {
         NpcNamesList.entries.forEach {
             loadDialog(it.name.lowercase())
         }
+
+        loadPlayerDialogs()
+    }
+
+    private fun loadPlayerDialogs() {
+        val file = Gdx.files.internal("npc/dialogs/player.json")
+        val json = JsonReader().parse(file)
+        val playerDialogs = mutableMapOf<String, List<DialogLine>>()
+
+        PlayerDialogs.entries.forEach { dialogEntry ->
+            val key = dialogEntry.name.lowercase()
+            val linesArray: List<String> = json.get(key).mapNotNull { it.asString() }
+            val dialogLinesList: List<DialogLine> = linesArray.map { DialogLine(it) }
+            playerDialogs[key] = dialogLinesList
+        }
+
+        dialogs.add(DialogData("player", playerDialogs))
+
     }
 
     private fun loadDialog(npcName: String) {
@@ -31,7 +49,8 @@ class DialogStore {
         fun parseNode(path: String, node: JsonValue) {
             if (node.isArray) {
                 val linesArray: List<String> = node.mapNotNull { it.asString() }
-                val dialogLinesList: List<DialogLine> = linesArray.map { DialogLine(it) } // TODO: add portrait or emotion
+                val dialogLinesList: List<DialogLine> =
+                    linesArray.map { DialogLine(it) } // TODO: add portrait or emotion
                 npcDialogs[path] = dialogLinesList
             } else if (node.isObject) {
                 var child = node.child
@@ -51,6 +70,10 @@ class DialogStore {
         //dialogs.firstOrNull()?.dialogs?.get("introduction")       // ➜ List of introduction lines
         //dialogs.firstOrNull()?.dialogs?.get("spring.day_1")       // ➜ List of spring day 1 lines
         //dialogs.firstOrNull()?.dialogs?.get("festivals.alaki.end")
+    }
+
+    fun getPlayerDialog(dialogEntryKey: PlayerDialogs): List<DialogLine>? {
+        return dialogs.firstOrNull { it.npc == "player" }?.dialogs?.get(dialogEntryKey.name.lowercase())
     }
 
 }

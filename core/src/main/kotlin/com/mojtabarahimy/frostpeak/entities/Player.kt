@@ -12,8 +12,8 @@ import com.mojtabarahimy.frostpeak.util.ktx.distanceToRectangleEdge
 class Player(
     val texture: Texture,
     val walkSound: Sound,
-    val toolInventory : ToolInventory,
-    val itemInventory : ItemInventory,
+    val toolInventory: ToolInventory,
+    val itemInventory: ItemInventory,
     private val collisionSystem: CollisionSystem
 ) : Person by Npc(texture, walkSound, collisionSystem) {
 
@@ -34,8 +34,8 @@ class Player(
         return target
     }
 
-    fun fillBucket(target : ToolTarget) {
-        toolInventory.fillBucket()
+    fun fillBucket(target: ToolTarget): Boolean? {
+        return toolInventory.fillBucket()
     }
 
     private fun detectToolTarget(objects: List<ToolTarget>): ToolTarget? {

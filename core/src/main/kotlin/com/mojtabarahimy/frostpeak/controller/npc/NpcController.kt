@@ -16,7 +16,7 @@ import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
 class NpcController(collisionSystem: CollisionSystem) {
 
     private val npcs = mutableListOf<Person>()
-    var onInteract: ((Person)-> Unit)? = null
+    var onInteract: ((Person) -> Boolean)? = null
 
     private val georgianaTexture = Texture("npc/sprites/georgiana.png")
 
@@ -54,7 +54,10 @@ class NpcController(collisionSystem: CollisionSystem) {
 
     fun initCollision(collisionSystem: CollisionSystem) {
         npcs.forEach {
-            collisionSystem.addCollisionBox(it.javaClass.simpleName, Rectangle(it.x, it.y, 20f,20f))
+            collisionSystem.addCollisionBox(
+                it.javaClass.simpleName,
+                Rectangle(it.x, it.y, 20f, 20f)
+            )
         }
     }
 
@@ -63,9 +66,9 @@ class NpcController(collisionSystem: CollisionSystem) {
             interactionSystem.addInteractable(
                 it.javaClass.simpleName,
                 InteractableType.Npc,
-                Rectangle(it.x, it.y, 20f,20f),
+                Rectangle(it.x, it.y, 20f, 20f),
                 onInteract = {
-                    onInteract?.invoke(it)
+                    onInteract?.invoke(it) ?: false
                 }
             )
         }

@@ -11,20 +11,20 @@ sealed class InteractableObject {
     abstract val name: String
     abstract val type: InteractableType?
     abstract val bounds: Rectangle
-    abstract var onInteract: (() -> Unit)?
+    abstract var onInteract: (() -> Boolean)?
 
     data class BasicInteractable(
         override val name: String,
         override val type: InteractableType?,
         override val bounds: Rectangle,
-        override var onInteract: (() -> Unit)? = null
+        override var onInteract: (() -> Boolean)? = null
     ) : InteractableObject()
 
     data class FountainInteractable(
         override val name: String,
         override val type: InteractableType?,
         override val bounds: Rectangle,
-        override var onInteract: (() -> Unit)? = null
+        override var onInteract: (() -> Boolean)? = null
     ) : InteractableObject(), ToolTarget {
 
         override fun onToolUsed(tool: Tool) {
@@ -44,7 +44,7 @@ sealed class InteractableObject {
         override val type: InteractableType?,
         override val bounds: Rectangle,
         val maxHp: Int,
-        override var onInteract: (() -> Unit)? = null
+        override var onInteract: (() -> Boolean)? = null
     ) : InteractableObject(), ToolTarget {
         var hp = maxHp
 
@@ -71,7 +71,7 @@ sealed class InteractableObject {
         override val bounds: Rectangle,
         var digLevel: Int,
         var waterLevel: Float = 0f,
-        override var onInteract: (() -> Unit)? = null
+        override var onInteract: (() -> Boolean)? = null
     ) : InteractableObject(), ToolTarget {
 
         fun dig() {

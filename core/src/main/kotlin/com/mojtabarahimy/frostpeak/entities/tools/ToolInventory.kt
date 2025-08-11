@@ -39,10 +39,15 @@ class ToolInventory(toolStore: ToolStore) {
 
     }
 
-    fun fillBucket() {
+    fun fillBucket(): Boolean? {
         if (selectedTool is Bucket) {
             (selectedTool as? Bucket)?.changeState(true)
+            return true
         }
+
+        if (tools.filterIsInstance<Bucket>().isEmpty()) return null
+
+        return false
     }
 
     fun emptyBucket() {

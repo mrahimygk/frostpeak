@@ -89,8 +89,8 @@ class InteractionSystem {
 
             //TODO: if invoke() returns false, we do not return@handleInteraction, and we let the code continue
             it.onInteract?.let {
-                it.invoke()
-                return
+                val res = it.invoke()
+                if(res) return
             }
 
             when (it.name) {
@@ -112,6 +112,10 @@ class InteractionSystem {
 
                 "bed" -> {
                     onNextDay()
+                }
+
+                "fountain" -> {
+                    println("if player does not have bucket, start the dialog")
                 }
             }
         }
@@ -148,7 +152,7 @@ class InteractionSystem {
         name: String,
         type: InteractableType,
         interactable: Rectangle,
-        onInteract: (() -> Unit)
+        onInteract: (() -> Boolean)
     ) {
         interactables.add(
             InteractableObject.BasicInteractable(
