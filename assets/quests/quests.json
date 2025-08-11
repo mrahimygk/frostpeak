@@ -1,0 +1,36 @@
+[{
+  "id": "quests_georgiana_fetch_water",
+  "next_quest_id": "",
+  "giver": "georgiana",
+  "title": "Fetch Some Water",
+  "description": "I need two buckets of water from the fountain nearby",
+  "prerequisites": {
+    "tools": [
+      "bucket"
+    ],
+    "items": []
+  },
+  "requirements": {
+    "item": "bucket",
+    "count": 2
+  },
+  "rewards": {
+    "money": 1000,
+    "relationship": {
+      "georgiana": 10,
+      "aoddess": 5
+    }
+  },
+  "available_after": {
+    "year": 1,
+    "season": "spring",
+    "day": 3
+  },
+  "dialog": {
+    "not_started": ["Hey! Can you fetch two buckets of water for me?"],
+    "in_progress": ["Still waiting for water..."],
+    "completed": ["Thanks darling! you are a good person." , "Here's your reward. And you csn keep the bucket"]
+  }
+}
+
+  ]

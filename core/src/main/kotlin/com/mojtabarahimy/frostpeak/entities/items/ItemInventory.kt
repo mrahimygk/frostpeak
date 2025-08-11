@@ -2,7 +2,7 @@ package com.mojtabarahimy.frostpeak.entities.items
 
 import com.badlogic.gdx.graphics.Texture
 
-class ItemInventory {
+class ItemInventory(itemStore: ItemStore) {
     private val slots = mutableListOf<ItemStack>()
     val texture = Texture("inventory/inventory_onscreen.png")
 

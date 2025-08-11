@@ -12,14 +12,13 @@ import com.mojtabarahimy.frostpeak.util.ktx.distanceToRectangleEdge
 class Player(
     val texture: Texture,
     val walkSound: Sound,
+    val toolInventory : ToolInventory,
+    val itemInventory : ItemInventory,
     private val collisionSystem: CollisionSystem
 ) : Person by Npc(texture, walkSound, collisionSystem) {
 
     override val name: String
         get() = "TODO(Load from gamer's prefs)"
-
-    val toolInventory = ToolInventory()
-    val itemInventory = ItemInventory()
 
     fun switchToolForward() {
         toolInventory.nextTool()
@@ -33,6 +32,10 @@ class Player(
         val target = detectToolTarget(targets)
         toolInventory.useSelectedTool(target)
         return target
+    }
+
+    fun fillBucket(target : ToolTarget) {
+        toolInventory.fillBucket()
     }
 
     private fun detectToolTarget(objects: List<ToolTarget>): ToolTarget? {

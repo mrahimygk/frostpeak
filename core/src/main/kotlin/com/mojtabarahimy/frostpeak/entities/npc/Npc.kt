@@ -20,7 +20,9 @@ open class Npc(
     val texture: Texture,
     private val walkSound: Sound,
     private val collisionSystem: CollisionSystem
-) : Person, Drawable by MultipleLayerDrawable(), CollisionPerformer by BasicCollisionPerformer() {
+) : Person,
+    Drawable by MultipleLayerDrawable(),
+    CollisionPerformer by BasicCollisionPerformer() {
 
     override var hasIntroduced: Boolean = false
         get() = field //TODO("load from save file")

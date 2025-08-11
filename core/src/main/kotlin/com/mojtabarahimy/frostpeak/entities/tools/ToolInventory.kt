@@ -2,17 +2,18 @@ package com.mojtabarahimy.frostpeak.entities.tools
 
 import com.badlogic.gdx.graphics.Texture
 
-class ToolInventory {
+class ToolInventory(toolStore: ToolStore) {
     val tools = mutableListOf<Tool>()
+
     private var selectedIndex = 0
 
     val texture = Texture("inventory/inventory_onscreen.png")
 
     init {
-        tools.add(Axe())
-        tools.add(Knife())
-        tools.add(Shovel())
-        tools.add(Pickax())
+        tools.add(toolStore.allTools[0])
+        tools.add(toolStore.allTools[1])
+        tools.add(toolStore.allTools[2])
+        tools.add(toolStore.allTools[3])
     }
 
     val selectedTool: Tool?
@@ -36,5 +37,21 @@ class ToolInventory {
         selectedIndex = i
         println("Tool is ${selectedTool?.name}")
 
+    }
+
+    fun fillBucket() {
+        if (selectedTool is Bucket) {
+            (selectedTool as? Bucket)?.changeState(true)
+        }
+    }
+
+    fun emptyBucket() {
+        if (selectedTool is Bucket) {
+            (selectedTool as? Bucket)?.changeState(false)
+        }
+    }
+
+    fun addTool(tool: Tool) {
+        tools.add(tool)
     }
 }

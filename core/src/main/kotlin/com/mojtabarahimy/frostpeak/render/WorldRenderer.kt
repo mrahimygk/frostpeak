@@ -15,14 +15,18 @@ import com.mojtabarahimy.frostpeak.controller.MapTransitionController
 import com.mojtabarahimy.frostpeak.controller.WorldCameraController
 import com.mojtabarahimy.frostpeak.controller.dialog.DialogManager
 import com.mojtabarahimy.frostpeak.controller.npc.NpcController
+import com.mojtabarahimy.frostpeak.controller.quests.QuestManager
 import com.mojtabarahimy.frostpeak.data.GroundHolesManager
 import com.mojtabarahimy.frostpeak.data.PlayerData
+import com.mojtabarahimy.frostpeak.data.quests.QuestDefinition
 import com.mojtabarahimy.frostpeak.data.time.GameClock
 import com.mojtabarahimy.frostpeak.entities.Player
 import com.mojtabarahimy.frostpeak.entities.crops.Grapevine
 import com.mojtabarahimy.frostpeak.entities.fruit.FruitParticleSystem
 import com.mojtabarahimy.frostpeak.entities.fruit.harvest.DroppedItem
 import com.mojtabarahimy.frostpeak.entities.items.Item
+import com.mojtabarahimy.frostpeak.entities.items.ItemInventory
+import com.mojtabarahimy.frostpeak.entities.tools.ToolInventory
 import com.mojtabarahimy.frostpeak.entities.tools.ToolTarget
 import com.mojtabarahimy.frostpeak.input.PlayerInputProcessor
 import com.mojtabarahimy.frostpeak.interaction.InteractableObject
@@ -35,8 +39,11 @@ import com.mojtabarahimy.frostpeak.util.Constants
 class WorldRenderer(
     private val clock: GameClock,
     private val playerData: PlayerData,
+    private val toolInventory: ToolInventory,
+    private val itemInventory: ItemInventory,
     private val dialogManager: DialogManager,
-    private val weatherSystem: WeatherSystem
+    private val weatherSystem: WeatherSystem,
+    private val questManager: QuestManager
 ) {
 
     private val batch = SpriteBatch()
@@ -134,7 +141,7 @@ class WorldRenderer(
 
         groundHolesManager = GroundHolesManager(interactionSystem.getGroundInteractables())
 
-        player = Player(texture, walkSound, collisionSystem)
+        player = Player(texture, walkSound, toolInventory, itemInventory, collisionSystem)
 
         worldCamera.position.set(
             player.x + player.texture.width / 2f,
@@ -194,8 +201,15 @@ class WorldRenderer(
                             //TODO: animation
                         }
                     }
+
+                    is InteractableObject.FountainInteractable -> {
+                        target.onInteract = {
+                            player.fillBucket(target)
+                        }
+                    }
                 }
-            })
+            },
+        )
 
         Gdx.input.inputProcessor = playerInputProcessor
         spawnPlayer("spawn_path")
@@ -208,7 +222,12 @@ class WorldRenderer(
         }
 
         npcController.onInteract = { person ->
-            dialogManager.onInteract(person)
+            dialogManager.onInteract(person) { quest: QuestDefinition ->
+                quest.questPrerequisites.tools.forEach {
+                    toolInventory.addTool(it)
+                }
+                //TODO: render quest info in hud, add tools and items to player inventory
+            }
         }
 
         mapTransitionController = MapTransitionController(gameMap)

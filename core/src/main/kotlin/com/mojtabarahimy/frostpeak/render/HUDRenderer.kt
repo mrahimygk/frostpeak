@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.viewport.FitViewport
+import com.mojtabarahimy.frostpeak.controller.quests.QuestManager
 import com.mojtabarahimy.frostpeak.data.PlayerData
 import com.mojtabarahimy.frostpeak.data.time.GameClock
 import com.mojtabarahimy.frostpeak.entities.items.ItemInventory
@@ -17,7 +18,10 @@ import com.mojtabarahimy.frostpeak.util.Constants
 class HUDRenderer(
     private val clock: GameClock,
     private val playerData: PlayerData,
-    private val dialogRenderer: DialogRenderer
+    private val toolInventory: ToolInventory,
+    private val itemInventory: ItemInventory,
+    private val dialogRenderer: DialogRenderer,
+    private val questManager: QuestManager
 ) {
     private val uiCamera = OrthographicCamera()
     private val uiViewport: FitViewport =
@@ -36,8 +40,6 @@ class HUDRenderer(
 
     fun render(
         delta: Float,
-        inventory: ToolInventory,
-        itemInventory: ItemInventory,
         playerY: Float,
         playerData: PlayerData
     ) {
@@ -51,7 +53,7 @@ class HUDRenderer(
 
         batch.begin()
         clock.draw(batch, font)
-        drawInventory(inventory, playerY)
+        drawInventory(toolInventory, playerY)
         drawItemInventory(itemInventory, playerY)
         drawMoney(playerData)
         dialogRenderer.draw(batch, uiViewport.worldWidth, uiViewport.worldHeight)

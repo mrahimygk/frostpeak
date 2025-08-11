@@ -3,9 +3,8 @@ package com.mojtabarahimy.frostpeak.controller.dialog
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.JsonReader
 import com.badlogic.gdx.utils.JsonValue
+import com.mojtabarahimy.frostpeak.data.DialogData
 import com.mojtabarahimy.frostpeak.data.NpcNamesList
-
-data class DialogData(val npc: String, val dialogs: Map<String, List<DialogLine>>)
 
 class DialogStore {
 
