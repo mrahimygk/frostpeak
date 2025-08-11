@@ -182,32 +182,6 @@ class WorldRenderer(
             onUsingTool = {
                 val target = player.useTool(getWorldTargets(), playerData.energy)
                 playerData.useEnergy(5f)
-                when (target) {
-                    is InteractableObject.StoneInteractable -> {
-                        target.onInteract = {
-                            interactionSystem.removeInteractable(target.bounds)
-                            collisionSystem.removeCollisionBox(target.name)
-                            gameMap.removeStoneLayer(target)
-                            stonesList.firstOrNull { it.name == target.name }?.breakStone()
-                        }
-                    }
-
-                    is InteractableObject.GroundInteractable -> {
-                        target.onInteract = {
-                            //TODO: remove interactable if digged enough,
-                            //TODO: change it to bucket tool if it's raining
-                            groundHolesManager.dig(target)
-                            collisionSystem.addCollisionBox(target.name, target.bounds)
-                            //TODO: animation
-                        }
-                    }
-
-                    is InteractableObject.FountainInteractable -> {
-                        target.onInteract = {
-                            player.fillBucket(target)
-                        }
-                    }
-                }
             },
         )
 
@@ -243,7 +217,36 @@ class WorldRenderer(
         val list = mutableListOf<ToolTarget>()
         if (mapHasGrapevine()) list.add(grapevine)
 
-        list.addAll(interactionSystem.getToolTargets())
+        val toolTargets = interactionSystem.getToolTargets()
+        toolTargets.forEach { target ->
+            when (target) {
+                is InteractableObject.StoneInteractable -> {
+                    target.onInteract = {
+                        interactionSystem.removeInteractable(target.bounds)
+                        collisionSystem.removeCollisionBox(target.name)
+                        gameMap.removeStoneLayer(target)
+                        stonesList.firstOrNull { it.name == target.name }?.breakStone()
+                    }
+                }
+
+                is InteractableObject.GroundInteractable -> {
+                    target.onInteract = {
+                        //TODO: remove interactable if digged enough,
+                        //TODO: change it to bucket tool if it's raining
+                        groundHolesManager.dig(target)
+                        collisionSystem.addCollisionBox(target.name, target.bounds)
+                        //TODO: animation
+                    }
+                }
+
+                is InteractableObject.FountainInteractable -> {
+                    target.onInteract = {
+                        player.fillBucket(target)
+                    }
+                }
+            }
+        }
+        list.addAll(toolTargets)
 
         return list
     }
