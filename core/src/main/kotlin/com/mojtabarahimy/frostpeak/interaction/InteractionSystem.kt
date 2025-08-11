@@ -52,6 +52,16 @@ class InteractionSystem {
                         )
                     }
 
+                    InteractableType.Fountain -> {
+                        temp.add(
+                            InteractableObject.FountainInteractable(
+                                obj.name,
+                                obj.type,
+                                obj.bounds,
+                            )
+                        )
+                    }
+
                     else -> {
                         temp.add(obj)
                     }
@@ -92,7 +102,7 @@ class InteractionSystem {
 
                 "exit_door" -> onNextMap(
                     "maps/main_house_outdoor_big.tmx",
-                    arrayOf("ground", "trees", "houseBase"),
+                    arrayOf("ground", "trees", "houseBase", "fountain"),
                     arrayOf("abovePlayer"),
                 )
 
@@ -158,8 +168,7 @@ class InteractionSystem {
 
     fun getToolTargets(): List<ToolTarget> {
         return mutableListOf<ToolTarget>().apply {
-            addAll(interactables.filterIsInstance<InteractableObject.StoneInteractable>())
-            addAll(interactables.filterIsInstance<InteractableObject.GroundInteractable>())
+            addAll(interactables.filterIsInstance<ToolTarget>())
         }
     }
 

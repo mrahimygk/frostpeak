@@ -1,6 +1,7 @@
 package com.mojtabarahimy.frostpeak.interaction
 
 import com.badlogic.gdx.math.Rectangle
+import com.mojtabarahimy.frostpeak.entities.tools.Bucket
 import com.mojtabarahimy.frostpeak.entities.tools.Pickax
 import com.mojtabarahimy.frostpeak.entities.tools.Shovel
 import com.mojtabarahimy.frostpeak.entities.tools.Tool
@@ -18,6 +19,25 @@ sealed class InteractableObject {
         override val bounds: Rectangle,
         override var onInteract: (() -> Unit)? = null
     ) : InteractableObject()
+
+    data class FountainInteractable(
+        override val name: String,
+        override val type: InteractableType?,
+        override val bounds: Rectangle,
+        override var onInteract: (() -> Unit)? = null
+    ) : InteractableObject(), ToolTarget {
+
+        override fun onToolUsed(tool: Tool) {
+            println("${tool.name} used on ${name}")
+            if (tool is Bucket) {
+                tool.gainXP()
+                onInteract?.invoke()
+            }
+        }
+
+        override val rect: Rectangle
+            get() = bounds
+    }
 
     data class StoneInteractable(
         override val name: String,

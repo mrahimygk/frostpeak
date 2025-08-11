@@ -62,7 +62,7 @@ class WorldRenderer(
     private val interactionSystem = InteractionSystem()
     private val stonesList = mutableListOf<BreakableStone>()
     private val particleSystem = FruitParticleSystem()
-    private val groundHolesManager : GroundHolesManager
+    private val groundHolesManager: GroundHolesManager
 
     private val shapeRenderer = ShapeRenderer()
 
@@ -125,7 +125,7 @@ class WorldRenderer(
 
         mapSize = gameMap.initMap(
             mapName,
-            beforePlayerLayers = arrayOf("ground", "trees", "houseBase"),
+            beforePlayerLayers = arrayOf("ground", "trees", "houseBase", "fountain"),
             afterPlayerLayers = arrayOf("abovePlayer"),
             spawnPointName = "spawn_path",
         )
