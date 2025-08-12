@@ -21,7 +21,7 @@ class MapTransitionController(private val gameMap: GameMap) {
             if (targetMap != null && targetSpawn != null) {
                 return gameMap.loadNewMap(
                     "maps/$targetMap",
-                    arrayOf("ground"),
+                    arrayOf("ground", "trees", "houseBase", "fountain"),
                     arrayOf("abovePlayer"),
                     spawnPointName = targetSpawn,
                     onLoadedNewMap = onLoadedNewMap
