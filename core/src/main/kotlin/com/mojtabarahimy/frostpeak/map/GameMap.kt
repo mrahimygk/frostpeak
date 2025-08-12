@@ -164,5 +164,5 @@ class GameMap {
 }
 
 private fun Array<String>.toMapIndices(map: TiledMap): IntArray {
-    return mapNotNull { name -> map.layers.getIndex(name) }.toIntArray()
+    return mapNotNull { name -> map.layers.getIndex(name) }.filter { it >= 0 }.toIntArray()
 }
