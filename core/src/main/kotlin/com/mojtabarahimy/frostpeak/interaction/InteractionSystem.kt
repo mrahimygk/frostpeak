@@ -77,11 +77,7 @@ class InteractionSystem {
 
     fun handleInteraction(
         playerBounds: Rectangle,
-        onNextMap: (
-            mapFilePath: String,
-            beforePlayerLayers: Array<String>,
-            afterPlayerLayers: Array<String>
-        ) -> Unit,
+        onNextMap: (mapFilePath: String) -> Unit,
         onNextDay: () -> Unit
     ) {
         getNearbyInteraction(playerBounds)?.let {
@@ -90,20 +86,16 @@ class InteractionSystem {
             //TODO: if invoke() returns false, we do not return@handleInteraction, and we let the code continue
             it.onInteract?.let {
                 val res = it.invoke()
-                if(res) return
+                if (res) return
             }
 
             when (it.name) {
                 "house_door" -> onNextMap(
                     "maps/main_house_indoor.tmx",
-                    arrayOf("ground", "bed"),
-                    arrayOf("abovePlayer"),
                 )
 
                 "exit_door" -> onNextMap(
                     "maps/main_house_outdoor_big.tmx",
-                    arrayOf("ground", "trees", "houseBase", "fountain"),
-                    arrayOf("abovePlayer"),
                 )
 
                 "mullberry_tree_main" -> {
@@ -176,7 +168,7 @@ class InteractionSystem {
         }
     }
 
-    fun getGroundInteractables() : List<InteractableObject.GroundInteractable>{
+    fun getGroundInteractables(): List<InteractableObject.GroundInteractable> {
         return interactables.filterIsInstance<InteractableObject.GroundInteractable>()
     }
 

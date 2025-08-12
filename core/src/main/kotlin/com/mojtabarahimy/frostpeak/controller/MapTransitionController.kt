@@ -12,7 +12,7 @@ class MapTransitionController(private val gameMap: GameMap) {
     fun update(
         playerBounds: Rectangle,
         onLoadedNewMap: ((spawnPointName: String, targetMap: String) -> Unit)? = null
-    ) : Vector2? {
+    ): Vector2? {
         val exit = checkExitCollision(playerBounds)
 
         if (exit != null) {
@@ -21,8 +21,6 @@ class MapTransitionController(private val gameMap: GameMap) {
             if (targetMap != null && targetSpawn != null) {
                 return gameMap.loadNewMap(
                     "maps/$targetMap",
-                    arrayOf("ground", "trees", "houseBase", "fountain"),
-                    arrayOf("abovePlayer"),
                     spawnPointName = targetSpawn,
                     onLoadedNewMap = onLoadedNewMap
                 )

@@ -136,8 +136,6 @@ class WorldRenderer(
 
         mapSize = gameMap.initMap(
             mapName,
-            beforePlayerLayers = arrayOf("ground", "trees", "houseBase", "fountain"),
-            afterPlayerLayers = arrayOf("abovePlayer"),
             spawnPointName = "spawn_path",
         )
 
@@ -164,11 +162,9 @@ class WorldRenderer(
                     .handleInteraction(
                         player.getInteractionBounds(),
                         onNextMap =
-                            { mapFilePath, beforePlayerLayers, afterPlayerLayers ->
+                            { mapFilePath ->
                                 mapSize = gameMap.loadNewMap(
                                     mapFilePath,
-                                    beforePlayerLayers,
-                                    afterPlayerLayers,
                                     spawnPointName = "spawn_my_door",
                                     onLoadedNewMap = { spawnPointName, targetMap ->
                                         spawnPlayer(spawnPointName)
@@ -200,7 +196,11 @@ class WorldRenderer(
         }
 
         npcController.onInteract = { person ->
-            dialogManager.onInteract(person, toolInventory, itemInventory) { quest: QuestDefinition ->
+            dialogManager.onInteract(
+                person,
+                toolInventory,
+                itemInventory
+            ) { quest: QuestDefinition ->
                 quest.questPrerequisites.tools.forEach {
                     toolInventory.addTool(it)
                 }

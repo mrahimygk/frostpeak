@@ -17,16 +17,12 @@ class GameMap {
 
     lateinit var map: TiledMap
     private lateinit var renderer: OrthogonalTiledMapRenderer
-    private lateinit var beforePlayerLayers: IntArray
-    private lateinit var afterPlayerLayers: IntArray
     private lateinit var stonesLayers: IntArray
     private val stonesLayerNames = mutableListOf<String>()
     private val spawnPoints: MutableMap<String, SpawnPoint> = mutableMapOf()
 
     fun initMap(
         mapFilePath: String,
-        beforePlayerLayers: Array<String>,
-        afterPlayerLayers: Array<String>,
         unitScale: Float = Constants.MAP_UNTI_SCALE,
         spawnPointName: String,
         onLoadedNewMap: ((spawnPointName: String, targetMap: String) -> Unit)? = null
@@ -45,9 +41,6 @@ class GameMap {
         stonesLayerNames.clear()
         stonesLayerNames.addAll(stoneLayerNamesTmpList)
         recalculateStoneLayers()
-
-        this.beforePlayerLayers = beforePlayerLayers.toMapIndices(map)
-        this.afterPlayerLayers = afterPlayerLayers.toMapIndices(map)
 
         val musicPath = map.properties["music"] as? String
         //TODO: musicPath?.let { MusicManager.playMusic(it) }
@@ -108,13 +101,13 @@ class GameMap {
 
     fun renderMapBeforePlayer(camera: OrthographicCamera) {
         renderer.setView(camera)
-        renderer.render(beforePlayerLayers)
+        renderer.render(Constants.ALL_MAP_LAYERS_BEHIND.toMapIndices(map))
         renderer.render(stonesLayers)
     }
 
     fun renderMapAfterPlayer(camera: OrthographicCamera) {
         renderer.setView(camera)
-        renderer.render(afterPlayerLayers)
+        renderer.render(Constants.ALL_MAP_LAYERS_ABOVE.toMapIndices(map))
     }
 
     fun dispose() {
@@ -124,8 +117,6 @@ class GameMap {
 
     fun loadNewMap(
         mapFilePath: String,
-        beforePlayerLayers: Array<String>,
-        afterPlayerLayers: Array<String>,
         unitScale: Float = Constants.MAP_UNTI_SCALE,
         spawnPointName: String,
         onLoadedNewMap: ((spawnPointName: String, targetMap: String) -> Unit)? = null
@@ -133,8 +124,6 @@ class GameMap {
         dispose()
         return initMap(
             mapFilePath,
-            beforePlayerLayers,
-            afterPlayerLayers,
             unitScale,
             spawnPointName,
             onLoadedNewMap
