@@ -31,7 +31,16 @@ class QuestManager(private val questStore: QuestStore) {
         questStates[id]?.status = QuestStatus.IN_PROGRESS
     }
 
-    fun completeQuest(id: String) {
+    fun updateProgress(id: String, amount: Int) {
+        val state = questStates[id] ?: return
+        val def = questStore.getById(id) ?: return
+        state.progress += amount
+        if (state.progress >= def.questRequirement.count) {
+            completeQuest(id)
+        }
+    }
+
+    private fun completeQuest(id: String) {
         questStates[id]?.status = QuestStatus.COMPLETED
     }
     /*

@@ -200,7 +200,7 @@ class WorldRenderer(
         }
 
         npcController.onInteract = { person ->
-            dialogManager.onInteract(person) { quest: QuestDefinition ->
+            dialogManager.onInteract(person, toolInventory, itemInventory) { quest: QuestDefinition ->
                 quest.questPrerequisites.tools.forEach {
                     toolInventory.addTool(it)
                 }

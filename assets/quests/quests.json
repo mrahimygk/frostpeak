@@ -27,7 +27,7 @@
   },
   "dialog": {
     "not_started": ["Hey! My legs are weak nowadays son.", "Can you fetch two buckets of water for me?", "Oh you do not have a bucket to fill? Sure darling, have this!"],
-    "in_progress": ["Still waiting for water..."],
+    "in_progress": ["I am gonna wait for you to bring me water darling.", "You did bring me AMOUNT buckets of water."],
     "completed": ["Thanks darling! you are a good person." , "Here's your reward. And you csn keep the bucket"]
   }
 }

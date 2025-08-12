@@ -6,6 +6,9 @@ import com.mojtabarahimy.frostpeak.data.quests.QuestStatus
 import com.mojtabarahimy.frostpeak.data.time.GameClock
 import com.mojtabarahimy.frostpeak.data.time.Season
 import com.mojtabarahimy.frostpeak.entities.Talkable
+import com.mojtabarahimy.frostpeak.entities.items.ItemInventory
+import com.mojtabarahimy.frostpeak.entities.tools.ChangeableState
+import com.mojtabarahimy.frostpeak.entities.tools.ToolInventory
 import com.mojtabarahimy.frostpeak.render.DialogRenderer
 
 class DialogManager(
@@ -17,10 +20,14 @@ class DialogManager(
 
     fun onInteract(
         talkable: Talkable,
+        toolInventory: ToolInventory,
+        itemInventory: ItemInventory,
         onStartQuest: (quest: QuestDefinition) -> Unit
-    ) : Boolean {
+    ): Boolean {
         getDialog(
             talkable,
+            toolInventory,
+            itemInventory,
             gameClock.year,
             gameClock.season,
             gameClock.day,
@@ -35,6 +42,8 @@ class DialogManager(
 
     private fun getDialog(
         talkable: Talkable,
+        toolInventory: ToolInventory,
+        itemInventory: ItemInventory,
         year: Int,
         season: Season,
         day: Int,
@@ -59,17 +68,7 @@ class DialogManager(
             }
         } else {
             if (hasQuestsForMe) {
-                quests.firstOrNull()?.let {
-                    val questDialogs = it.questDialogs[it.state.status]
-                    if (it.state.status == QuestStatus.NOT_STARTED) {
-                        questManager.startQuest(it.questId)
-                        onStartQuest.invoke(it)
-                    } else {
-                        //TODO: check if meet the quest requirements
-                        questManager.completeQuest(it.questId)
-                    }
-                    return questDialogs
-                }
+                return fetchQuestDialogs(quests, toolInventory, itemInventory, onStartQuest)
             }
             while (currentDay >= 1) {
                 val key = "${season.name.lowercase()}.day_$currentDay"
@@ -79,6 +78,46 @@ class DialogManager(
         }
 
         return null
+    }
+
+    private fun fetchQuestDialogs(
+        quests: List<QuestDefinition>,
+        toolInventory: ToolInventory,
+        itemInventory: ItemInventory,
+        onStartQuest: (quest: QuestDefinition) -> Unit
+
+    ): List<DialogLine>? {
+        return quests.firstOrNull()?.let { questDefinition: QuestDefinition ->
+            if (questDefinition.state.status == QuestStatus.NOT_STARTED) {
+                val questDialogs =
+                    questDefinition.questDialogs[questDefinition.state.status]
+                questManager.startQuest(questDefinition.questId)
+                onStartQuest.invoke(questDefinition)
+                questDialogs
+            } else {
+                val changeableTools =
+                    toolInventory.tools.filterIsInstance<ChangeableState>()
+                val containsToolReq =
+                    toolInventory.tools.map { tool -> tool.name.lowercase() }
+                        .contains(questDefinition.questRequirement.itemId.lowercase())
+                if (containsToolReq && changeableTools.map { tool -> tool.stateChanged }
+                        .all { stateChanged -> stateChanged }) {
+                    questManager.updateProgress(questDefinition.questId, 1)
+                    changeableTools.forEach { tool -> tool.changeState(false) }
+                }
+
+                questDefinition.questDialogs[questDefinition.state.status]?.map { dialog ->
+                    if (dialog.text.contains("AMOUNT")) {
+                        dialog.text = dialog.text.replace(
+                            "AMOUNT",
+                            questDefinition.state.progress.toString()
+                        )
+                    }
+                    dialog
+                }
+
+            }
+        }
     }
 
     fun startPlayerDialog(noBucket: PlayerDialogs) {
