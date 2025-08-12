@@ -17,8 +17,7 @@
   "rewards": {
     "money": 1000,
     "relationship": {
-      "georgiana": 10,
-      "aoddess": 5
+      "georgiana": 10
     }
   },
   "available_after": {
@@ -27,7 +26,7 @@
     "day": 3
   },
   "dialog": {
-    "not_started": ["Hey! Can you fetch two buckets of water for me?"],
+    "not_started": ["Hey! My legs are weak nowadays son.", "Can you fetch two buckets of water for me?", "Oh you do not have a bucket to fill? Sure darling, have this!"],
     "in_progress": ["Still waiting for water..."],
     "completed": ["Thanks darling! you are a good person." , "Here's your reward. And you csn keep the bucket"]
   }
