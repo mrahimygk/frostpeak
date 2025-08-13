@@ -247,8 +247,15 @@ class WorldRenderer(
 
                 is InteractableObject.FountainInteractable -> {
                     target.onInteract = {
+                        var alreadyShownDialogs = false
+                        if (target.name == "fountain") {
+                            alreadyShownDialogs = dialogManager
+                                .startPlayerDialog(PlayerDialogs.FOUNTAIN_INTRODUCTION)
+                        }
                         val isResSuccess = player.fillBucket(target)
-                        if (isResSuccess == null) dialogManager.startPlayerDialog(PlayerDialogs.NO_BUCKET)
+                        if (isResSuccess == null && !alreadyShownDialogs) {
+                            dialogManager.startPlayerDialog(PlayerDialogs.NO_BUCKET)
+                        }
 
                         isResSuccess == true
                     }

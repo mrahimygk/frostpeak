@@ -120,9 +120,17 @@ class DialogManager(
         }
     }
 
-    fun startPlayerDialog(noBucket: PlayerDialogs) {
-        dialogStore.getPlayerDialog(noBucket)?.let {
-            dialogRenderer.startDialog(it)
-        }
+    fun startPlayerDialog(playerDialogs: PlayerDialogs): Boolean {
+        val dialogLines: List<DialogLine>? = dialogStore.getPlayerDialog(playerDialogs)
+        dialogLines?.let { lines ->
+            if (lines.all { !it.isOneTime }) {
+                dialogRenderer.startDialog(lines)
+                return true
+            } else if (lines.all { !it.shownBefore }) {
+                dialogRenderer.startDialog(lines)
+                lines.forEach { it.shownBefore = true }
+                return true
+            } else return false
+        } ?: return false
     }
 }

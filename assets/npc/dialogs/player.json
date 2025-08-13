@@ -1,4 +1,11 @@
 {
+  "fountain_introduction": {
+    "is_one_time": true,
+    "data": [
+      "This is the main water source of the inner village area",
+      "It comes from high quality groundwater."
+    ]
+  },
   "no_bucket": [
     "I do not have a bucket to refill yet, maybe I should get one...."
   ]

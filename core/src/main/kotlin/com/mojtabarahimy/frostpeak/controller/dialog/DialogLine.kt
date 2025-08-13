@@ -4,5 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 
 data class DialogLine(
     var text: String,
-    val portrait: TextureRegion? = null  // null for narration
+    val portrait: TextureRegion? = null,  // null for narration
+    val isOneTime: Boolean = false,
+    var shownBefore: Boolean = false,
 )

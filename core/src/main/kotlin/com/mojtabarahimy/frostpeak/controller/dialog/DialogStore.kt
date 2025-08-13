@@ -32,8 +32,17 @@ class DialogStore {
 
         PlayerDialogs.entries.forEach { dialogEntry ->
             val key = dialogEntry.name.lowercase()
-            val linesArray: List<String> = json.get(key).mapNotNull { it.asString() }
-            val dialogLinesList: List<DialogLine> = linesArray.map { DialogLine(it) }
+            val node = json.get(key)
+            var isOneTime = false
+            val linesArray: List<String> = if (node.isArray) {
+                node
+            } else {
+                isOneTime = node.getBoolean("is_one_time")
+                node.get("data")
+            }.mapNotNull { it.asString() }
+            val dialogLinesList: List<DialogLine> = linesArray.map {
+                DialogLine(it, isOneTime = isOneTime)
+            }
             playerDialogs[key] = dialogLinesList
         }
 
