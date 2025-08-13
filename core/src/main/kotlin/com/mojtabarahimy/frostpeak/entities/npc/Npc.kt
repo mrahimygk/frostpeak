@@ -97,7 +97,7 @@ open class Npc(
         if (isMoving) {
             footstepTimer += delta
             if (footstepTimer >= footstepInterval) {
-                walkSound.play(0.5f)
+                walkSound.play(0.15f)
                 footstepTimer = 0f
             }
         } else {
