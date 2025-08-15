@@ -16,6 +16,7 @@ import com.mojtabarahimy.frostpeak.controller.WorldCameraController
 import com.mojtabarahimy.frostpeak.controller.dialog.DialogManager
 import com.mojtabarahimy.frostpeak.controller.dialog.PlayerDialogs
 import com.mojtabarahimy.frostpeak.controller.npc.NpcController
+import com.mojtabarahimy.frostpeak.controller.npc.NpcScheduleStore
 import com.mojtabarahimy.frostpeak.controller.quests.QuestManager
 import com.mojtabarahimy.frostpeak.data.GroundHolesManager
 import com.mojtabarahimy.frostpeak.data.PlayerData
@@ -44,7 +45,8 @@ class WorldRenderer(
     private val itemInventory: ItemInventory,
     private val dialogManager: DialogManager,
     private val weatherSystem: WeatherSystem,
-    private val questManager: QuestManager
+    private val questManager: QuestManager,
+    private val npcScheduleStore: NpcScheduleStore
 ) {
 
     private val batch = SpriteBatch()
@@ -66,7 +68,7 @@ class WorldRenderer(
     private val gameMap = GameMap()
     private var mapSize: Vector2
     private val collisionSystem = CollisionSystem()
-    private val npcController = NpcController(collisionSystem)
+    private val npcController = NpcController(collisionSystem, npcScheduleStore)
     private val interactionSystem = InteractionSystem()
     private val stonesList = mutableListOf<BreakableStone>()
     private val particleSystem = FruitParticleSystem()
@@ -191,8 +193,13 @@ class WorldRenderer(
         font = BitmapFont()
         font.color = Color.WHITE
 
-        clock.onNextDay = { _: Int, dayInYear: Int ->
-            grapevine.checkGrowth(dayInYear)
+        clock.onNextDay = { clock ->
+            grapevine.checkGrowth(clock.dayInYear)
+            npcController.updateScheduleListForToday(clock)
+        }
+
+        clock.onHourTick = { clock ->
+            npcController.checkUpdateHourlySchedule(clock)
         }
 
         npcController.onInteract = { person ->

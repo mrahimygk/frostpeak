@@ -12,16 +12,22 @@ val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 
 class GameClock(
     var currentWeather: WeatherType = WeatherType.SUNNY,
-    var onNextDay: ((dayInMonth: Int, dayInYear: Int) -> Unit)? = null,
-    var onNextWeek: ((dayInYear: Int) -> Unit)? = null,
-    var onNextSeason: ((dayInYear: Int, season: Season) -> Unit)? = null,
-    var onNextYear: ((year: Int) -> Unit)? = null,
+    var onMinuteTick: ((clock: GameClock) -> Unit)? = null,
+    var onHourTick: ((clock: GameClock) -> Unit)? = null,
+    var onNextDay: ((clock: GameClock) -> Unit)? = null,
+    var onNextWeek: ((clock: GameClock) -> Unit)? = null,
+    var onNextSeason: ((clock: GameClock) -> Unit)? = null,
+    var onNextYear: ((clock: GameClock) -> Unit)? = null,
 ) {
 
-    private var hours = 6
-    private var minutes = 0
+    var hours = 6
+    var minutes = 0
     var day = 1
     var dayCounter = 0
+    var dayInYear: Int = dayCounter
+        get() = dayCounter % 120
+        private set
+
     var season = Season.SPRING
     var year = 1
 
@@ -56,11 +62,14 @@ class GameClock(
         if (this.minutes >= 60) {
             this.minutes = 0
             hours += 1
+            onHourTick?.invoke(this)
         }
 
         if (hours >= 24) {
             incrementDay()
         }
+
+        onMinuteTick?.invoke(this)
     }
 
     fun incrementDay() {
@@ -68,15 +77,15 @@ class GameClock(
         minutes = 0
         day += 1
         dayCounter += 1
-        onNextDay?.invoke(day, dayCounter)
-        if (dayCounter % 7 == 0) onNextWeek?.invoke(dayCounter)
+        onNextDay?.invoke(this)
+        if (dayCounter % 7 == 0) onNextWeek?.invoke(this)
         if (day > 30) {
             day = 1
             season = Season.entries.toTypedArray()[(season.ordinal + 1) % 4]
-            onNextSeason?.invoke(dayCounter, season)
+            onNextSeason?.invoke(this)
             if (season == Season.SPRING) {
                 year += 1
-                onNextYear?.invoke(year)
+                onNextYear?.invoke(this)
             }
         }
     }

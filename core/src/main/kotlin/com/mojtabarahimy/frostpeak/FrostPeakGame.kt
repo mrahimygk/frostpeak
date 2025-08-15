@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.mojtabarahimy.frostpeak.controller.dialog.DialogManager
 import com.mojtabarahimy.frostpeak.controller.dialog.DialogStore
+import com.mojtabarahimy.frostpeak.controller.npc.NpcScheduleStore
 import com.mojtabarahimy.frostpeak.controller.quests.QuestManager
 import com.mojtabarahimy.frostpeak.controller.quests.QuestStore
 import com.mojtabarahimy.frostpeak.data.PlayerData
@@ -48,6 +49,8 @@ class FrostPeakGame : ApplicationAdapter() {
         val questStore = QuestStore(toolStore, itemStore)
         val questManager = QuestManager(questStore)
 
+        val npcScheduleStore = NpcScheduleStore(clock)
+
         val dialogStore = DialogStore()
         val dialogRenderer = DialogRenderer(dialogFont, ninePatch)
         val dialogManager = DialogManager(dialogStore, dialogRenderer, clock, questManager)
@@ -61,7 +64,8 @@ class FrostPeakGame : ApplicationAdapter() {
             itemInventory,
             dialogManager,
             weatherSystem,
-            questManager
+            questManager,
+            npcScheduleStore
         )
 
         hudRenderer = HUDRenderer(

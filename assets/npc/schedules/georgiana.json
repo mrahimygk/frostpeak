@@ -1,0 +1,40 @@
+{
+  "schedules": [
+    {
+      "year": 1,
+      "season": "spring",
+      "day": 1,
+      "time": "08:00",
+      "target": {
+        "x": 12,
+        "y": 8
+      },
+      "action": "walk",
+      "facing": "down"
+    },
+    {
+      "year": 1,
+      "season": "spring",
+      "day": 1,
+      "time": "18:00",
+      "target": {
+        "x": 12,
+        "y": 18
+      },
+      "action": "walk",
+      "facing": "down"
+    },
+    {
+      "year": 1,
+      "season": "spring",
+      "day": 1,
+      "time": "12:00",
+      "target": {
+        "x": 8,
+        "y": 21
+      },
+      "action": "walk",
+      "facing": "up"
+    }
+  ]
+}
