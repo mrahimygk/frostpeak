@@ -1,17 +1,16 @@
 package com.mojtabarahimy.frostpeak.collision
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.MapLayer
 import com.badlogic.gdx.maps.objects.PolygonMapObject
 import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Polygon
 import com.badlogic.gdx.math.Rectangle
-import com.mojtabarahimy.frostpeak.util.Constants
+import com.mojtabarahimy.frostpeak.entities.Person
+import com.mojtabarahimy.frostpeak.entities.npc.Npc
 
 class CollisionSystem {
 
@@ -101,5 +100,12 @@ class CollisionSystem {
         colliders.indexOfFirst { it is Collider.Poly && it.polygon == collisionBounds }.let {
             if (it >= 0) colliders.removeAt(it)
         }
+    }
+
+    fun update(rect: Rectangle, npc: Npc) {
+        val collider = colliders.firstOrNull { it.name?.lowercase() == npc.name.lowercase() }
+        val poly = rect.toPolygon()
+        if (collider is Collider.Box) collider.rect.set(rect)
+        if (collider is Collider.Poly) collider.polygon.setPosition(poly.x, poly.y)
     }
 }
