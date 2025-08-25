@@ -35,4 +35,8 @@ class BasicCollisionPerformer : CollisionPerformer {
             }
         }
     }
+
+    override fun getPassiveInteractionBounds(collisionBounds: Rectangle): Rectangle =
+        Rectangle(collisionBounds)
+
 }

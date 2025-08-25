@@ -7,4 +7,5 @@ import com.mojtabarahimy.frostpeak.entities.Direction
 interface CollisionPerformer {
     fun drawDebug(shapeRenderer: ShapeRenderer, collisionBounds: Rectangle)
     fun getInteractionBounds(collisionBounds: Rectangle, currentDirection: Direction): Rectangle
+    fun getPassiveInteractionBounds(collisionBounds: Rectangle): Rectangle
 }
