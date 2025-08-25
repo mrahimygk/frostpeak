@@ -75,6 +75,11 @@ class InteractionSystem {
         interactables.addAll(temp)
     }
 
+    fun update(rectangle: Rectangle, name: String) {
+        val interactable = interactables.firstOrNull { it.name.lowercase() == name.lowercase() }
+        interactable?.bounds?.set(rectangle)
+    }
+
     fun handleInteraction(
         playerBounds: Rectangle,
         onNextMap: (mapFilePath: String) -> Unit,

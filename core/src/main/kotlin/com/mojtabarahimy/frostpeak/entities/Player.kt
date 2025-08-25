@@ -14,8 +14,7 @@ class Player(
     val walkSound: Sound,
     val toolInventory: ToolInventory,
     val itemInventory: ItemInventory,
-    private val collisionSystem: CollisionSystem
-) : Person by Npc(texture, walkSound, collisionSystem) {
+) : Person by Npc("player", texture, walkSound) {
 
     override val name: String
         get() = "TODO(Load from gamer's prefs)"

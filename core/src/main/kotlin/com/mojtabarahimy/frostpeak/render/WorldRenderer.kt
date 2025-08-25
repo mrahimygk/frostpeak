@@ -68,7 +68,7 @@ class WorldRenderer(
     private val gameMap = GameMap()
     private var mapSize: Vector2
     private val collisionSystem = CollisionSystem()
-    private val npcController = NpcController(collisionSystem, npcScheduleStore)
+    private val npcController = NpcController(npcScheduleStore)
     private val interactionSystem = InteractionSystem()
     private val stonesList = mutableListOf<BreakableStone>()
     private val particleSystem = FruitParticleSystem()
@@ -145,7 +145,7 @@ class WorldRenderer(
 
         groundHolesManager = GroundHolesManager(interactionSystem.getGroundInteractables())
 
-        player = Player(texture, walkSound, toolInventory, itemInventory, collisionSystem)
+        player = Player(texture, walkSound, toolInventory, itemInventory)
 
         worldCamera.position.set(
             player.x + player.texture.width / 2f,
@@ -157,7 +157,7 @@ class WorldRenderer(
         playerInputProcessor = PlayerInputProcessor(
             player,
             playerMovement = { delta, dx, dy ->
-                player.update(delta, dx, dy)
+                player.update(delta, dx, dy, collisionSystem)
             },
             onInteract = {
                 interactionSystem
@@ -169,8 +169,8 @@ class WorldRenderer(
                                     mapFilePath,
                                     spawnPointName = "spawn_my_door",
                                     onLoadedNewMap = { spawnPointName, targetMap ->
-                                        spawnPlayer(spawnPointName)
                                         initializeMap(targetMap)
+                                        spawnPlayer(spawnPointName)
                                     }
                                 )
                             },
@@ -309,7 +309,7 @@ class WorldRenderer(
         val interactableObject = interactionSystem.getNearbyInteraction(interactionBounds)
         particleSystem.update(delta)
         stonesList.forEach { it.update(delta) }
-        npcController.update(delta)
+        npcController.update(delta, interactionSystem, collisionSystem)
         groundHolesManager.update(delta, clock.currentWeather)
 
         gameMap.renderMapBeforePlayer(worldCamera)
@@ -347,8 +347,8 @@ class WorldRenderer(
 
         val newMapSize =
             mapTransitionController.update(player.getInteractionBounds()) { spawnPointName, targetMap ->
-                spawnPlayer(spawnPointName)
                 initializeMap(targetMap)
+                spawnPlayer(spawnPointName)
             }
 
         newMapSize?.let { mapSize = it }
@@ -380,9 +380,12 @@ class WorldRenderer(
 
 
     private fun spawnPlayer(spawnPoint: String) {
-        gameMap.getSpawnPoint(spawnPoint).run {
-            player.setPosition(location.x, location.y)
-            player.setDirection(direction)
+        val (direction, location) = gameMap.getSpawnPoint(spawnPoint)
+        player.run {
+            setPosition(location.x, location.y)
+            setDirection(direction)
+            update(0f, 0f, 0f, collisionSystem)
+            collisionSystem.addCollisionBox("player", getPassiveInteractionBounds())
         }
     }
 

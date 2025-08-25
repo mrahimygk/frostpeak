@@ -13,10 +13,7 @@ import com.mojtabarahimy.frostpeak.entities.npc.Georgiana
 import com.mojtabarahimy.frostpeak.interaction.InteractableType
 import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
 
-class NpcController(
-    private val collisionSystem: CollisionSystem,
-    private val npcScheduleStore: NpcScheduleStore,
-) {
+class NpcController(private val npcScheduleStore: NpcScheduleStore) {
 
     private val npcs = mutableListOf<Person>()
     var onInteract: ((Person) -> Boolean)? = null
@@ -26,7 +23,6 @@ class NpcController(
     private val georgiana = Georgiana(
         georgianaTexture,
         Gdx.audio.newSound(Gdx.files.internal("sounds/footstep1.wav")),
-        collisionSystem
     )
 
     fun initMap(map: TiledMap) {
@@ -43,11 +39,23 @@ class NpcController(
 
     }
 
-    fun update(delta: Float) {
-        npcs.forEach { npc ->
-            val schedule = npcScheduleStore.getCurrentSchedule(npc.name)
-            schedule?.let { println("schedule for $npc : $schedule") }
-            npc.update(delta, 0f, 0f)
+    fun update(
+        delta: Float,
+        interactionSystem: InteractionSystem,
+        collisionSystem: CollisionSystem
+    ) {
+        npcs.forEach { person ->
+            val schedule = npcScheduleStore.getCurrentSchedule(person.name)
+            schedule?.let {
+                println("schedule for $person : $schedule")
+            }
+            if (!collisionSystem.checkCollision(person.getPassiveInteractionBounds(), person)) {
+                /**
+                 * example:
+                 */
+                //person.update(delta, 0f, -0.80f, collisionSystem)
+            }
+            interactionSystem.update(person.getPassiveInteractionBounds(), person.name.lowercase())
         }
     }
 

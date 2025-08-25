@@ -17,9 +17,9 @@ import com.mojtabarahimy.frostpeak.render.MultipleLayerDrawable
 import com.mojtabarahimy.frostpeak.util.Constants
 
 open class Npc(
+    private val inName: String,
     val texture: Texture,
     private val walkSound: Sound,
-    private val collisionSystem: CollisionSystem
 ) : Person,
     Drawable by MultipleLayerDrawable(),
     CollisionPerformer by BasicCollisionPerformer() {
@@ -33,7 +33,7 @@ open class Npc(
         }
 
     override val name: String
-        get() = ""
+        get() = inName
     override val nameId: String
         get() = name
 
@@ -79,9 +79,9 @@ open class Npc(
     private var footstepTimer = 0f
     private val footstepInterval = Constants.PLAYER_WALK_FRAME_DURATION * 2f
 
-    private val collisionBounds = Rectangle()
+    val collisionBounds = Rectangle()
 
-    override fun update(delta: Float, dx: Float, dy: Float) {
+    override fun update(delta: Float, dx: Float, dy: Float, collisionSystem: CollisionSystem) {
         isMoving = dx != 0f || dy != 0f
 
         currentDirection =
@@ -109,13 +109,21 @@ open class Npc(
 
         val w = downFrames[0].regionWidth
         val h = downFrames[0].regionHeight
-        collisionBounds.set(Rectangle(newX + w / 4f, newY + h / 6f, w / 2f, h / 6f))
-        if (!collisionSystem.checkCollision(collisionBounds)) {
+        collisionBounds.set(calculateInteractionBounds(newX, w, newY, h))
+        collisionSystem.update(collisionBounds, this)
+        if (!collisionSystem.checkCollision(collisionBounds, this)) {
             x = newX
             y = newY
         }
 
     }
+
+    private fun calculateInteractionBounds(
+        newX: Float,
+        w: Int,
+        newY: Float,
+        h: Int
+    ) = Rectangle(newX + w / 4f, newY + h / 6f, w / 2f, h / 6f)
 
     override fun draw(batch: SpriteBatch) {
         val frame: TextureRegion? = if (isMoving)
@@ -133,6 +141,9 @@ open class Npc(
 
     override fun getInteractionBounds(): Rectangle =
         getInteractionBounds(collisionBounds, currentDirection)
+
+    override fun getPassiveInteractionBounds(): Rectangle =
+        getPassiveInteractionBounds(collisionBounds)
 
     override fun getCameraFocusX(): Float = x + Constants.PLAYER_WIDTH / 2f
     override fun getCameraFocusY(): Float = y + Constants.PLAYER_HEIGHT / 2f

@@ -35,9 +35,11 @@ class CollisionSystem {
         colliders.addAll(temp)
     }
 
-    fun checkCollision(rect: Rectangle): Boolean {
+    fun checkCollision(rect: Rectangle, person: Person): Boolean {
         var collidesWithAny = false
         for (collider in colliders) {
+            if (person.name.lowercase() == collider.name?.lowercase()) continue
+
             collidesWithAny = when (collider) {
                 is Collider.Box -> collider.rect.overlaps(rect)
                 is Collider.Poly -> Intersector.overlapConvexPolygons(
