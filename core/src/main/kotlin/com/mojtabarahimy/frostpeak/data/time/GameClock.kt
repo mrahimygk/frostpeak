@@ -126,14 +126,14 @@ class GameClock(
             batch,
             "Time: ${getTimeString()}",
             Constants.worldWidth / 3f,
-            Constants.worldHeight / 3f
+            Constants.worldHeight / 3f + 30f
         )
 
         font.draw(
             batch,
             getFormattedDate(),
             Constants.worldWidth / 3f,
-            Constants.worldHeight / 3f - 20f
+            Constants.worldHeight / 3f + 10f
         )
     }
 }
