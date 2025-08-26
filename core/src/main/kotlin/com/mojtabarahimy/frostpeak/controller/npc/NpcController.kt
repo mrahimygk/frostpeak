@@ -45,6 +45,7 @@ class NpcController(private val npcScheduleStore: NpcScheduleStore) {
         collisionSystem: CollisionSystem
     ) {
         npcs.forEach { person ->
+            person.update(delta, 0f, 0f, collisionSystem)
             val schedule = npcScheduleStore.getCurrentSchedule(person.name)
             schedule?.let {
                 println("schedule for $person : $schedule")
