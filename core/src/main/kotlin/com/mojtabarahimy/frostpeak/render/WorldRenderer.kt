@@ -193,6 +193,9 @@ class WorldRenderer(
         font = BitmapFont()
         font.color = Color.WHITE
 
+        npcController.updateScheduleListForToday(clock)
+        npcController.checkUpdateHourlySchedule(clock)
+
         clock.onNextDay = { clock ->
             grapevine.checkGrowth(clock.dayInYear)
             npcController.updateScheduleListForToday(clock)

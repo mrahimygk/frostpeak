@@ -5,6 +5,7 @@ object Constants {
     const val worldWidth = 800f
     const val worldHeight = 480f
     const val speed = 100f
+    const val NPC_SPEED = 70f
 
     const val marginFraction: Float = 1f / 3f
 

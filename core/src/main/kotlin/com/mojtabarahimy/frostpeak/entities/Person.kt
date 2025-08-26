@@ -12,6 +12,7 @@ interface Person : Talkable {
     var currentDirection: Direction
 
     fun update(delta: Float, dx: Float, dy: Float, collisionSystem: CollisionSystem)
+    fun moveToward(targetX: Float, targetY: Float, delta: Float, collisionSystem: CollisionSystem)
     fun draw(batch: SpriteBatch)
     fun drawDebug(shapeRenderer: ShapeRenderer)
     fun getInteractionBounds(): Rectangle
@@ -23,3 +24,9 @@ interface Person : Talkable {
     fun setPosition(x: Float, y: Float)
     fun setDirection(direction: Direction)
 }
+
+fun Person.atTarget(targetX: Float, targetY: Float, tolerance: Float = 0.05f): Boolean {
+    return (kotlin.math.abs(x - targetX) <= tolerance &&
+        kotlin.math.abs(y - targetY) <= tolerance)
+}
+

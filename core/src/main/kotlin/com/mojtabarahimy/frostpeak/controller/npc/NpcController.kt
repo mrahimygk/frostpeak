@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Rectangle
 import com.mojtabarahimy.frostpeak.collision.CollisionSystem
 import com.mojtabarahimy.frostpeak.data.time.GameClock
 import com.mojtabarahimy.frostpeak.entities.Person
+import com.mojtabarahimy.frostpeak.entities.atTarget
 import com.mojtabarahimy.frostpeak.entities.npc.Georgiana
 import com.mojtabarahimy.frostpeak.interaction.InteractableType
 import com.mojtabarahimy.frostpeak.interaction.InteractionSystem
@@ -47,14 +48,16 @@ class NpcController(private val npcScheduleStore: NpcScheduleStore) {
         npcs.forEach { person ->
             person.update(delta, 0f, 0f, collisionSystem)
             val schedule = npcScheduleStore.getCurrentSchedule(person.name)
-            schedule?.let {
-                println("schedule for $person : $schedule")
-            }
-            if (!collisionSystem.checkCollision(person.getPassiveInteractionBounds(), person)) {
-                /**
-                 * example:
-                 */
-                //person.update(delta, 0f, -0.80f, collisionSystem)
+            schedule?.let { schedule ->
+                //println("schedule for $person : $schedule")
+                val isAtTarget = person.atTarget(schedule.target.x, schedule.target.y)
+                if (!collisionSystem.checkCollision(person.getPassiveInteractionBounds(), person) && !isAtTarget) {
+                    person.moveToward(schedule.target.x, schedule.target.y, delta, collisionSystem)
+                    /**
+                     * example:
+                     */
+                    //person.update(delta, 0f, -0.80f, collisionSystem)
+                }
             }
             interactionSystem.update(person.getPassiveInteractionBounds(), person.name.lowercase())
         }

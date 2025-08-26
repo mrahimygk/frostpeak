@@ -12,9 +12,11 @@ import com.mojtabarahimy.frostpeak.collision.CollisionPerformer
 import com.mojtabarahimy.frostpeak.collision.CollisionSystem
 import com.mojtabarahimy.frostpeak.entities.Direction
 import com.mojtabarahimy.frostpeak.entities.Person
+import com.mojtabarahimy.frostpeak.entities.atTarget
 import com.mojtabarahimy.frostpeak.render.Drawable
 import com.mojtabarahimy.frostpeak.render.MultipleLayerDrawable
 import com.mojtabarahimy.frostpeak.util.Constants
+import com.mojtabarahimy.frostpeak.util.Constants.NPC_SPEED
 
 open class Npc(
     private val inName: String,
@@ -94,36 +96,58 @@ open class Npc(
 
         stateTime += delta
 
+        updateFootstepTimer(delta)
+
+        val newX = x + dx
+        val newY = y + dy
+
+        updatePosition(collisionSystem, newX, newY)
+    }
+
+    override fun moveToward(targetX: Float, targetY: Float, delta: Float, collisionSystem: CollisionSystem) {
+        val dx = targetX - x
+        val dy = targetY - y
+
+        isMoving = dx != 0f || dy != 0f
+
+        if (atTarget(targetX, targetY)) return
+
+        val length = kotlin.math.sqrt(dx * dx + dy * dy)
+
+        if (length != 0f) {
+            val nx = dx / length
+            val ny = dy / length
+
+            currentDirection = when {
+                kotlin.math.abs(nx) > kotlin.math.abs(ny) && nx > 0 -> Direction.RIGHT
+                kotlin.math.abs(nx) > kotlin.math.abs(ny) && nx < 0 -> Direction.LEFT
+                ny > 0 -> Direction.UP
+                else -> Direction.DOWN
+            }
+
+            stateTime += delta
+
+            updateFootstepTimer(delta)
+
+            // Move toward target
+            val newX = x + nx * NPC_SPEED * delta
+            val newY = y + ny * NPC_SPEED * delta
+
+            updatePosition(collisionSystem, newX, newY)
+        }
+    }
+
+    private fun updateFootstepTimer(delta: Float) {
         if (isMoving) {
             footstepTimer += delta
             if (footstepTimer >= footstepInterval) {
-                walkSound.play(0.15f)
+                //walkSound.play(0.15f)
                 footstepTimer = 0f
             }
         } else {
             footstepTimer = footstepInterval // reset to delay next play
         }
-
-        val newX = x + dx
-        val newY = y + dy
-
-        val w = downFrames[0].regionWidth
-        val h = downFrames[0].regionHeight
-        collisionBounds.set(calculateInteractionBounds(newX, w, newY, h))
-        collisionSystem.update(collisionBounds, this)
-        if (!collisionSystem.checkCollision(collisionBounds, this)) {
-            x = newX
-            y = newY
-        }
-
     }
-
-    private fun calculateInteractionBounds(
-        newX: Float,
-        w: Int,
-        newY: Float,
-        h: Int
-    ) = Rectangle(newX + w / 4f, newY + h / 6f, w / 2f, h / 6f)
 
     override fun draw(batch: SpriteBatch) {
         val frame: TextureRegion? = if (isMoving)
@@ -136,16 +160,34 @@ open class Npc(
         }
     }
 
+    private fun calculateInteractionBounds(
+        newX: Float,
+        w: Int,
+        newY: Float,
+        h: Int
+    ) = Rectangle(newX + w / 4f, newY + h / 6f, w / 2f, h / 6f)
+
+    private fun updatePosition(collisionSystem: CollisionSystem, newX: Float, newY: Float) {
+        val w = downFrames[0].regionWidth
+        val h = downFrames[0].regionHeight
+        collisionBounds.set(calculateInteractionBounds(newX, w, newY, h))
+        collisionSystem.update(collisionBounds, this)
+        if (!collisionSystem.checkCollision(collisionBounds, this)) {
+            x = newX
+            y = newY
+        }
+    }
+
     override fun drawDebug(shapeRenderer: ShapeRenderer) =
         drawDebug(shapeRenderer, collisionBounds)
 
     override fun getInteractionBounds(): Rectangle =
         getInteractionBounds(collisionBounds, currentDirection)
-
     override fun getPassiveInteractionBounds(): Rectangle =
         getPassiveInteractionBounds(collisionBounds)
 
     override fun getCameraFocusX(): Float = x + Constants.PLAYER_WIDTH / 2f
+
     override fun getCameraFocusY(): Float = y + Constants.PLAYER_HEIGHT / 2f
 
     override fun setPosition(x: Float, y: Float) {
