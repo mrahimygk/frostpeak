@@ -1,5 +1,6 @@
 package com.mojtabarahimy.frostpeak.render
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
@@ -52,9 +53,9 @@ class HUDRenderer(
         dialogRenderer.update(delta)
 
         batch.begin()
-        clock.draw(batch, font)
-        drawInventory(toolInventory, playerY)
+        drawToolInventory(toolInventory, playerY)
         drawItemInventory(itemInventory, playerY)
+        clock.draw(batch, font)
         drawMoney(playerData)
         dialogRenderer.draw(batch, uiViewport.worldWidth, uiViewport.worldHeight)
         batch.end()
@@ -64,9 +65,17 @@ class HUDRenderer(
         shapeRenderer.end()
     }
 
-    fun renderEnergyBar(batch: SpriteBatch, playerData: PlayerData) {
+    fun resize(width: Int, height: Int) {
+        uiViewport.update(width, height)
+    }
+
+    fun dispose() {
+        batch.dispose()
+    }
+
+    private fun renderEnergyBar(batch: SpriteBatch, playerData: PlayerData) {
         val x = Constants.worldWidth / 3f
-        val y = Constants.worldHeight / 3f + 10f
+        val y = Constants.worldHeight / 3f + 40f
         val width = 100f
         val height = 10f
 
@@ -79,20 +88,10 @@ class HUDRenderer(
         shapeRenderer.rect(x, y, width * energyRatio, height)
     }
 
-    fun resize(width: Int, height: Int) {
-        uiViewport.update(width, height)
-    }
-
-    fun dispose() {
-        batch.dispose()
-    }
-
-    private fun drawInventory(inventory: ToolInventory, playerY: Float) {
-        val playerScreenY = uiCamera.project(projectionVector.set(0f, playerY, 0f)).y
+    private fun drawToolInventory(inventory: ToolInventory, playerY: Float) {
+        val playerScreenY = calculatePlayerScreenY(playerY)
+        val inventoryY = calculateInventoryHeight(playerScreenY)
         val inventoryX = -Constants.worldWidth / 2f + 32f
-        val inventoryY =
-            if (playerScreenY < Constants.worldHeight / 1.33f) Constants.worldHeight / 4f
-            else -Constants.worldHeight / 2f + 32f
         batch.draw(inventory.texture, inventoryX, inventoryY)
 
         inventory.tools.forEachIndexed { index, tool ->
@@ -108,11 +107,9 @@ class HUDRenderer(
     }
 
     private fun drawItemInventory(inventory: ItemInventory, playerY: Float) {
-        val playerScreenY = uiCamera.project(projectionVector.set(0f, playerY, 0f)).y
+        val playerScreenY = calculatePlayerScreenY(playerY)
+        val inventoryY = calculateInventoryHeight(playerScreenY)
         val inventoryX = Constants.worldWidth / 2f - inventory.texture.width - 32f
-        val inventoryY =
-            if (playerScreenY < Constants.worldHeight / 1.33f) Constants.worldHeight / 4f
-            else -Constants.worldHeight / 2f + 32f
         batch.draw(inventory.texture, inventoryX, inventoryY)
 
         inventory.getSlots().forEachIndexed { index, item ->
@@ -131,11 +128,23 @@ class HUDRenderer(
         }
     }
 
+    private fun calculateInventoryHeight(playerScreenY: Float): Float {
+        return if (playerScreenY < Gdx.graphics.height / 1.33f) {
+            Constants.worldHeight / 3.6f
+        } else {
+            -Constants.worldHeight / 2f + 32f
+        }
+    }
+
+    private fun calculatePlayerScreenY(playerY: Float): Float {
+        return uiCamera.project(projectionVector.set(0f, playerY, 0f)).y
+    }
+
     private fun drawMoney(playerData: PlayerData) {
         val moneyText = "${playerData.money}G"
         font.draw(
             batch, moneyText, Constants.worldWidth / 3f,
-            Constants.worldHeight / 3f - 40f
+            Constants.worldHeight / 3f - 10f
         )
     }
 
